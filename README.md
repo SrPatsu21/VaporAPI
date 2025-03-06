@@ -27,6 +27,7 @@ Por meio do eletrom conectando a API usando metodo https
 [Documentação](DocumentacaoAPI.md)
 
 #### Contem:
+
 - Detalhes sobre os endpoints:
   - Parâmetros de entrada e saída
   - Exemplos de uso
@@ -35,10 +36,14 @@ Por meio do eletrom conectando a API usando metodo https
 
 ### Documentação do Cliente
 
-[Documentação](DocumentacaoAPI.md)
+[Documentação](DocumentacaoCliente.md)
 #### Contem:
 
-<!--TODO -->
+- Detalhes sobre duncionamente:
+  - baixar arquivos
+  - publicar arquivos
+  - opções de customisação
+- Integração com outras tecnologia
 
 ## Projeto
 
