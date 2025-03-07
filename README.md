@@ -4,11 +4,15 @@
 
 ### API
 
-node, express e electrom
+node, express
 
 ### Banco de dados
 
 MongoDB
+
+### Cliente
+
+electrom
 
 ### Autenticação de Usuário da aplicação
 
@@ -50,6 +54,53 @@ Por meio do eletrom conectando a API usando metodo https
 ### Plano de Projeto
 
 <!--TODO -->
+#### Tema do Projeto/Contexto de Projeto
+
+Uma central online de distribuição e compartilhamento de arquivos via protocolo P2P e serviços na nuvem, visa a disseminação da cultura e arte de forma gratuita sendo este um direito da humanidade.
+
+#### Necessidade de Negócio
+
+A grande  dificuldade na hora de disponibilizar conteúdo de fomar digital é a falta de centralizacao e o baixo nivel de organizacao e filtragem. Nosso objetivo é facilitar o acesso a arquivos por diversos métodos de forma segura e centralizada, mantendo padroes, organizacão, filtros avancados e versionamento.
+
+#### Tipo de Projeto
+
+Desenvolvimento de Software
+
+#### Classe de Projeto
+
+Criação de Produto
+
+#### Objetivos do Projeto
+
+##### Objetivo Geral:
+
+Desenvolver uma plataforma de Centralização, organização e disponibilização de arquivos digitais de forma gratuita e online.
+
+##### Objetivos Específicos:
+
+- Criar uma API para, acesso aos links dos arquivos, ferramenta filtragem de busca, autentificacao, permitir novos arquivos.
+- Criar um cliente desktop com a funcao de consumir a API.
+- Desenvolver uma seção administrativa dentro do aplicativo para que os próprios usuários possam realizar uploads de arquivos
+- Aprimoramento da interface do cliente
+  - UI
+  - UX
+- Criar a documentação da API
+- Criar a documentação do cliente
+
+#### Metodologia Usada
+
+##### Processo(s):
+
+Será dividido em algumas etapas:
+  1. Levantamento de requisitos obrigatórios e opcionais
+  2. Definição de um MVP (Minimum Viable Product)
+  3. Desenvolvimento do MVP
+  4. Testes com o MVP
+  5. Publicação do MVP
+  6. Desenvolvimento dos requisitos opcionais conforme o tempo
+
+##### Tecnologia(s):
+[Tecnologias](#tecnologias)
 
 ### MVP
 
@@ -86,3 +137,5 @@ Por meio do eletrom conectando a API usando metodo https
 ** outro(s) item(s) poderão ser adicionados
 
 <!--TODO -->
+- tema
+  Uma central online de distribuição e compartilhamento de arquivos via protocolo P2P e serviços na nuvem, visa a disseminação da cultura e arte de forma gratuita sendo este um direito da humanidade.
