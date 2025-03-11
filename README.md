@@ -12,19 +12,22 @@ MongoDB
 
 ### Cliente
 
-electrom
+electron
 
 ### Autenticação de Usuário da aplicação
 
-Por meio do eletrom conectando a API usando metodo https
+Por meio do app conectando a API usando metodo https
 
 ### Versionamento
 
+<!--TODO improve-->
+
 - API
-    <!--TODO -->
+  version.feature.bugfix
 
 - Cliente
-    <!--TODO -->
+  version.feature.bugfix
+
 
 ### Documentação da API
 
@@ -100,11 +103,47 @@ Será dividido em algumas etapas:
   6. Desenvolvimento dos requisitos opcionais conforme o tempo
 
 ##### Tecnologia(s):
+
 [Tecnologias](#tecnologias)
+
+#### Recursos Alocados (humano/financeiro):
+
+##### Humano(s):
+
+3 desenvolvedores que trabalharam em todas as frentes, sendo 1 mais focado na API, outro mais focado no cliente e o terceiro mais na área de teste e identificação de novos requisitos.
+
+##### Financeiro(s):
+
+Da parte de recursos humanos, sem salário, os custos de desenvolvimento para os devs virá de doação. As ferramentas de software para o desenvolvimento serão todas gratuitas. Infraestrutura para desenvolvimento será a que os devs já possuem para uso pessoal. Deploy, o banco de dados será gratuito, o servidor da api ainda não foi decidido o fornecedor mas, provavelmente será terceirizado.
+
+### Stakeholdes
+
+| **Nome** | **Títulos** | **Experiência** | **Função** |
+|:----|:----:|:----:|----:|
+| **Matheus dos Santos Wogt** | Técnico de informática | Projeto Solamigos | Desenvolvedor |
+| **Paulo Sérgio Pierdoná** | Técnico de informática | Projeto Rota da Amizade | Desenvolvedor |
+| **Wellington** | Técnico de informática |  |Desenvolvedor/Tester |
+
+### Cronograma de Entregas
+
+#### Entrega 1: MVP
+
+Data:15/04/2025
+
+Descrição da Entrega: [MVP](#mvp)
+
+#### Entrega 2: Projeto completo
+
+Data: 15/06/2025
+
+Descrição da Entrega: Projeto completo sem funcionalidades extras
+
 
 ### MVP
 
 <!--TODO -->
+
+Entrega da API e do Banco de Dados já desenvolvidos, testados e funcionando, de acordo com o MVP, portanto eventuais atualizações para novas funções podem ser realizadas
 
 ### Listagem das Regras de Negócio
 
