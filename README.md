@@ -1,5 +1,8 @@
-# Vapor
+# VaporAPI
 
+## What it does
+ An online file sharing and distribution center via P2P protocol and cloud services. It aims to disseminate culture and art free of charge, which is a human right. 
+ 
 ## Tecnologias
 
 ### API
@@ -59,7 +62,7 @@ Por meio do app conectando a API usando metodo https
 <!--TODO -->
 #### Tema do Projeto/Contexto de Projeto
 
-Uma central online de distribuição e compartilhamento de arquivos via protocolo P2P e serviços na nuvem, visa a disseminação da cultura e arte de forma gratuita sendo este um direito da humanidade.
+Uma central online de distribuição e compartilhamento de arquivos via protocolo P2P e serviços na nuvem. Visa a disseminação da cultura e da arte de forma gratuita, sendo este um direito da humanidade.
 
 #### Necessidade de Negócio
 
