@@ -8,7 +8,7 @@ node, express
 
 ### Banco de dados
 
-MongoDB
+MongoDB, com sharding.
 
 ### Cliente
 
@@ -143,12 +143,13 @@ Descrição da Entrega: Projeto completo sem funcionalidades extras
 
 - API base
   - https
-  - Banco de dados
+  - [Banco de dados distribuidos](https://www.mongodb.com/docs/manual/sharding/)
   - Autentificação
   - Postar arquivos. Com nome, descrisao e link
   - Download sem autentificação
   - captcha antibot
   - pesquisa avancada
+
 - Cliente base
   - multiplataforma, (Windows/Linux), talvez (Mac)
   - Consumir api
