@@ -141,9 +141,33 @@ Descrição da Entrega: Projeto completo sem funcionalidades extras
 
 ### MVP
 
-<!--TODO -->
+- API base
+  - https
+  - Banco de dados
+  - Autentificação
+  - Postar arquivos. Com nome, descrisao e link
+  - Download sem autentificação
+  - captcha antibot
+  - pesquisa avancada
+- Cliente base
+  - multiplataforma, (Windows/Linux), talvez (Mac)
+  - Consumir api
+  - conexão com o qBittorrent
 
-Entrega da API e do Banco de Dados já desenvolvidos, testados e funcionando, de acordo com o MVP, portanto eventuais atualizações para novas funções podem ser realizadas
+### MLP
+
+- adds (how to do in API?)
+
+### Futuras Features
+
+- Avaliações
+- Comentarios
+- Comentarios + Avaliações
+- pesquisa avancada. Tags, categorias, versionamento, datas
+- Perfil de usuario
+- Video player
+- Image viewer
+- Shortcut media launcher
 
 ### Listagem das Regras de Negócio
 
