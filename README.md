@@ -1,45 +1,34 @@
 # VaporAPI
 
 ## What it does
- An online file sharing and distribution center via P2P protocol and cloud services. It aims to disseminate culture and art free of charge, which is a human right. 
- 
-## Tecnologias
+ An online file sharing and distribution center via P2P protocol and cloud services. It aims to disseminate culture and art free of charge, which is a human right.
 
-### API
+## Technologies
+
+### App
 
 node, express
 
-### Banco de dados
+### Database
 
-MongoDB, com sharding.
+MongoDB, with sharding.
 
-### Cliente
+### User Authentication
 
-electron
+Using the https method
 
-### Autenticação de Usuário da aplicação
+### Versioning
 
-Por meio do app conectando a API usando metodo https
+version.feature.bugfix
 
-### Versionamento
+### API Documentation
 
-<!--TODO improve-->
+[Documentation](https://github.com/SrPatsu21/VaporAPI/blob/main/DocumentacaoCliente.md)
 
-- API
-  version.feature.bugfix
+#### Contains:
 
-- Cliente
-  version.feature.bugfix
-
-
-### Documentação da API
-
-[Documentação](DocumentacaoAPI.md)
-
-#### Contem:
-
-- Detalhes sobre os endpoints:
-  - Parâmetros de entrada e saída
-  - Exemplos de uso
-- Recomendação:
-  - Uso de ferramentas como Swagger (facilita o teste e composição da documentação)
+- Details about the endpoints:
+- Input and output parameters
+- Usage examples
+- Recommendation:
+- Use of tools like Swagger (facilitates testing and documentation composition)
