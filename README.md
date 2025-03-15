@@ -1,7 +1,7 @@
 # VaporAPI
 
 ## What it does
- An online file sharing and distribution center via P2P protocol and cloud services. It aims to disseminate culture and art free of charge, which is a human right.
+An online file sharing and distribution center via P2P protocol and cloud services. It aims to disseminate culture and art free of charge, which is a human right.
 
 ## Technologies
 
