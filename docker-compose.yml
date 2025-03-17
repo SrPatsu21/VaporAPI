@@ -75,9 +75,9 @@ services:
         condition: service_healthy
 
 #Backup api
-  backupapi:
+  backup_api:
     image: busybox:latest
-    container_name: backupapi
+    container_name: backup_api
     volumes:
       - ./backup:/var/www
     command: ["httpd", "-f", "-p", "3000", "-h", "/var/www"]
