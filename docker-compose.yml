@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api1
-    image: app
+    image: node
     restart: always
     command:
       - bash
@@ -21,8 +21,8 @@ services:
     environment:
       - PORT=${PORTAPI1}
     depends_on:
-      - cert-generator:
-          condition: service_healthy
+      cert-generator:
+        condition: service_healthy
 
 #API 2
   api2:
@@ -30,7 +30,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api2
-    image: app
+    image: node
     restart: always
     command:
       - bash
@@ -46,16 +46,16 @@ services:
     environment:
       - PORT=${PORTAPI2}
     depends_on:
-      - cert-generator:
-          condition: service_healthy
+      cert-generator:
+        condition: service_healthy
 
 #API 3
-  api1:
+  api3:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: api1
-    image: app
+    container_name: api3
+    image: node
     restart: always
     command:
       - bash
@@ -71,8 +71,19 @@ services:
     environment:
       - PORT=${PORTAPI3}
     depends_on:
-      - cert-generator:
-          condition: service_healthy
+      cert-generator:
+        condition: service_healthy
+
+#Backup api
+  backupapi:
+    image: busybox:latest
+    container_name: backupapi
+    volumes:
+      - ./backup:/var/www
+    command: ["httpd", "-f", "-p", "3000", "-h", "/var/www"]
+    depends_on:
+      cert-generator:
+        condition: service_healthy
 
 #DB 1
 #DB 2
@@ -88,11 +99,11 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      app1:
+      api1:
         condition: service_started
-      app2:
+      api2:
         condition: service_started
-      app3:
+      api3:
         condition: service_started
       cert-generator:
         condition: service_healthy
