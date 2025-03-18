@@ -3,7 +3,7 @@ services:
   api1:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.web
     container_name: api1
     image: node
     restart: always
@@ -20,6 +20,8 @@ services:
       - .env
     environment:
       - PORT=${PORTAPI1}
+    ports:
+      - "${PORTAPI1}:${PORTAPI1}"
     depends_on:
       cert-generator:
         condition: service_healthy
@@ -28,7 +30,7 @@ services:
   api2:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.web
     container_name: api2
     image: node
     restart: always
@@ -45,6 +47,8 @@ services:
       - .env
     environment:
       - PORT=${PORTAPI2}
+    ports:
+      - "${PORTAPI2}:${PORTAPI2}"
     depends_on:
       cert-generator:
         condition: service_healthy
@@ -53,7 +57,7 @@ services:
   api3:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.web
     container_name: api3
     image: node
     restart: always
@@ -70,6 +74,8 @@ services:
       - .env
     environment:
       - PORT=${PORTAPI3}
+    ports:
+      - "${PORTAPI3}:${PORTAPI3}"
     depends_on:
       cert-generator:
         condition: service_healthy
