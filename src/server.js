@@ -1,56 +1,49 @@
-const express = require('express');
+const express = require("express");
+const mongoose = require("mongoose");
 require('dotenv').config();
-const app = express();
-const port = process.env.PORT || 3000;
 
+const PORT = process.env.PORT || 3000;
+const app = express();
 app.use(express.json());
 
-let items = [];
+// MongoDB Connection String (connect to Mongos Router)
+const mongoURI = process.env.MONGO_URI || "";
 
-// Get all items
-app.get('/items', (req, res) => {
-    res.json(items);
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+    .then(() => console.log("Connected to MongoDB sharded cluster"))
+    .catch(err => console.error("MongoDB connection error:", err));
+
+// Define User Schema
+const UserSchema = new mongoose.Schema({
+    userId: Number,  // Must be used as shard key!
+    name: String,
+    email: String,
 });
 
-// Get a single item by index
-app.get('/items/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    if (id >= 0 && id < items.length) {
-        res.json(items[id]);
-    } else {
-        res.status(404).json({ message: 'Item not found' });
+const User = mongoose.model("User", UserSchema);
+
+// Create a new user
+app.post("/users", async (req, res) => {
+    try {
+        const newUser = new User(req.body);
+        await newUser.save();
+        res.status(201).json(newUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
     }
 });
 
-// Create a new item
-app.post('/items', (req, res) => {
-    const newItem = req.body;
-    items.push(newItem);
-    res.status(201).json(newItem);
-});
-
-// Update an item
-app.put('/items/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    if (id >= 0 && id < items.length) {
-        items[id] = req.body;
-        res.json(items[id]);
-    } else {
-        res.status(404).json({ message: 'Item not found' });
+// Get all users
+app.get("/users", async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
-// Delete an item
-app.delete('/items/:id', (req, res) => {
-    const id = parseInt(req.params.id);
-    if (id >= 0 && id < items.length) {
-        items.splice(id, 1);
-        res.json({ message: 'Item deleted' });
-    } else {
-        res.status(404).json({ message: 'Item not found' });
-    }
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,11 +1,12 @@
 services:
+
+#* API Web
 #API 1
   api1:
     build:
       context: .
       dockerfile: Dockerfile.web
     container_name: api1
-    image: node
     restart: always
     command:
       - bash
@@ -19,9 +20,11 @@ services:
     env_file:
       - .env
     environment:
-      - PORT=${PORTAPI1}
+      - PORT=${PORT_API1}
     ports:
-      - "${PORTAPI1}:${PORTAPI1}"
+      - "${PORT_API1}:${PORT_API1}"
+    networks:
+      - mongo-network
     depends_on:
       cert-generator:
         condition: service_healthy
@@ -32,7 +35,6 @@ services:
       context: .
       dockerfile: Dockerfile.web
     container_name: api2
-    image: node
     restart: always
     command:
       - bash
@@ -46,9 +48,11 @@ services:
     env_file:
       - .env
     environment:
-      - PORT=${PORTAPI2}
+      - PORT=${PORT_API2}
     ports:
-      - "${PORTAPI2}:${PORTAPI2}"
+      - "${PORT_API2}:${PORT_API2}"
+    networks:
+      - mongo-network
     depends_on:
       cert-generator:
         condition: service_healthy
@@ -59,7 +63,6 @@ services:
       context: .
       dockerfile: Dockerfile.web
     container_name: api3
-    image: node
     restart: always
     command:
       - bash
@@ -73,9 +76,11 @@ services:
     env_file:
       - .env
     environment:
-      - PORT=${PORTAPI3}
+      - PORT=${PORT_API3}
     ports:
-      - "${PORTAPI3}:${PORTAPI3}"
+      - "${PORT_API3}:${PORT_API3}"
+    networks:
+      - mongo-network
     depends_on:
       cert-generator:
         condition: service_healthy
@@ -91,10 +96,102 @@ services:
       cert-generator:
         condition: service_healthy
 
+#* DATABASE
 #DB 1
-#DB 2
+  mongo_db1:
+    container_name: mongo_db1
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    volumes:
+      - mongodb_data1:/data/db
+    restart: always
+    command: mongod --configsvr --replSet configReplSet --port ${DB_PORT} --bind_ip_all
 
-#nginx
+#DB 2
+  mongo_db2:
+    container_name: mongo_db2
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    volumes:
+      - mongodb_data2:/data/db
+    restart: always
+    command: mongod --configsvr --replSet configReplSet --port ${DB_PORT} --bind_ip_all
+
+#DB 3
+  mongo_db3:
+    container_name: mongo_db3
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    volumes:
+      - mongodb_data3:/data/db
+    restart: always
+    command: mongod --configsvr --replSet configReplSet --port ${DB_PORT} --bind_ip_all
+
+# MongoDB Shard 1
+  shard1-1:
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    command: mongod --shardsvr --replSet shard1ReplSet --port 27018 --bind_ip_all
+    volumes:
+      - ./data/shard1-1:/data/db
+    networks:
+      - mongo-network
+
+  shard1-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    command: mongod --shardsvr --replSet shard1ReplSet --port 27018 --bind_ip_all
+    volumes:
+      - ./data/shard1-2:/data/db
+    networks:
+      - mongo-network
+
+  # MongoDB Shard 2
+  shard2-1:
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    command: mongod --shardsvr --replSet shard2ReplSet --port 27018 --bind_ip_all
+    volumes:
+      - ./data/shard2-1:/data/db
+    networks:
+      - mongo-network
+
+  shard2-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    command: mongod --shardsvr --replSet shard2ReplSet --port 27018 --bind_ip_all
+    volumes:
+      - ./data/shard2-2:/data/db
+    networks:
+      - mongo-network
+
+# Mongos Router
+  mongos:
+    build:
+      context: .
+      dockerfile: Dockerfile.data
+    command: mongos --configdb configReplSet/config1:27019,config2:27019,config3:27019 --bind_ip_all --port 27017
+    ports:
+      - "27017:27017"
+    networks:
+      - mongo-network
+    depends_on:
+      - mongo_db1
+      - mongo_db2
+      - mongo_db3
+      - shard1-1
+      - shard1-2
+      - shard2-1
+      - shard2-2
+
+#* NGINX
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -133,3 +230,16 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+
+# extra
+volumes:
+  mongodb_data1:
+    driver: local
+  mongodb_data2:
+    driver: local
+  mongodb_data3:
+    driver: local
+
+networks:
+  mongo-network:
+    driver: bridge
