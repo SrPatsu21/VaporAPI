@@ -28,6 +28,8 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+      mongos_router:
+        condition: service_started
 
 #API 2
   api2:
@@ -56,6 +58,8 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+      mongos_router:
+        condition: service_started
 
 #API 3
   api3:
@@ -84,6 +88,8 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+      mongos_router:
+        condition: service_started
 
 #Backup api
   backup_api:
@@ -113,6 +119,8 @@ services:
     attach: false
     logging:
       driver: "none"
+    env_file:
+      - .env
 
   mongo_config2:
     container_name: mongo_config2
@@ -127,6 +135,8 @@ services:
     attach: false
     logging:
       driver: "none"
+    env_file:
+      - .env
 
   mongo_config3:
     container_name: mongo_config3
@@ -141,6 +151,8 @@ services:
     attach: false
     logging:
       driver: "none"
+    env_file:
+      - .env
 
 # Shard
 #shard 1
@@ -157,6 +169,8 @@ services:
     attach: false
     logging:
       driver: "none"
+    env_file:
+      - .env
 
   mongo_shard1-2:
     container_name: mongo_shard1-2
@@ -171,6 +185,8 @@ services:
     attach: false
     logging:
       driver: "none"
+    env_file:
+      - .env
 
 #shard 2
   mongo_shard2-1:
@@ -186,6 +202,8 @@ services:
     attach: false
     logging:
       driver: "none"
+    env_file:
+      - .env
 
   mongo_shard2-2:
     container_name: mongo_shard2-2
@@ -200,10 +218,12 @@ services:
     attach: false
     logging:
       driver: "none"
+    env_file:
+      - .env
 
 
 # Mongos Router
-  mongos:
+  mongos_router:
     container_name: mongos_router
     build:
       context: .
@@ -213,10 +233,14 @@ services:
       - "${PORT_MONGO_ROUTER}:${PORT_MONGO_ROUTER}"
     networks:
       - mongo-network
+    volumes:
+      - .:/app
     attach: false
     logging:
       driver: "none"
     tty: true
+    env_file:
+      - .env
     depends_on:
       - mongo_config1
       - mongo_config2
@@ -248,6 +272,9 @@ services:
         condition: service_healthy
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
 
 #cert generator
   cert-generator:

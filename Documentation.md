@@ -1,4 +1,15 @@
 #
+## Run project
+
+first time:
+```shell
+docker compose up --remove-orphans --build
+```
+before you could just:
+```shell
+docker compose up --remove-orphans
+```
+
 ## Database
 
 |                        Component                       	|                Stores                	| Storage Requirement 	|
@@ -16,9 +27,9 @@ The config servers (config1, config2, config3) store metadata about the cluster,
 3. Balancer State -> Helps MongoDB balance data between shards.
 4. Cluster Authentication -> If enabled, stores authentication settings.
 
-To init db run:
+To init db, run:
 ```shell
-docker exec -it mongos_router mongosh < ./mongo_init/init-mongo.js
-docker exec -it mongos_router mongosh < ./mongo_init/init-shards.js
-docker exec -it mongos_router mongosh < ./mongo_init/shard-setup.js
+docker exec -i mongos_router mongosh < ./mongo_init/init-mongo.js
+docker exec -i mongos_router mongosh < ./mongo_init/init-shards.js
+docker exec -i mongos_router mongosh < ./mongo_init/shard-setup.js
 ```
