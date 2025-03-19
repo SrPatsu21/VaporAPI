@@ -12,7 +12,7 @@ services:
       - bash
       - -c
       - |
-        npm install --dev
+        npm install --include=dev
         npm run dev
     volumes: # keep package.json updated
       - .:/app
@@ -40,7 +40,7 @@ services:
       - bash
       - -c
       - |
-        npm install --dev
+        npm install --include=dev
         npm run dev
     volumes: # keep package.json updated
       - .:/app
@@ -68,7 +68,7 @@ services:
       - bash
       - -c
       - |
-        npm install --dev
+        npm install --include=dev
         npm run dev
     volumes: # keep package.json updated
       - .:/app
@@ -95,6 +95,8 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+    networks:
+      - mongo-network
 
 #* MONGODB
 #config
@@ -105,9 +107,12 @@ services:
       dockerfile: Dockerfile.data
     command: mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
     volumes:
-      - .mongo_config_data1:/data/db
+      - mongo_config_data1:/data/db
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
 
   mongo_config2:
     container_name: mongo_config2
@@ -116,9 +121,12 @@ services:
       dockerfile: Dockerfile.data
     command: mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
     volumes:
-      - .mongo_config_data2:/data/db
+      - mongo_config_data2:/data/db
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
 
   mongo_config3:
     container_name: mongo_config3
@@ -127,9 +135,12 @@ services:
       dockerfile: Dockerfile.data
     command: mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
     volumes:
-      - .mongo_config_data3:/data/db
+      - mongo_config_data3:/data/db
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
 
 # Shard
 #shard 1
@@ -143,6 +154,9 @@ services:
       - mongo_shard_data1-1:/data/db
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
 
   mongo_shard1-2:
     container_name: mongo_shard1-2
@@ -154,6 +168,9 @@ services:
       - mongo_shard_data1-2:/data/db
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
 
 #shard 2
   mongo_shard2-1:
@@ -166,6 +183,9 @@ services:
       - mongo_shard_data2-1:/data/db
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
 
   mongo_shard2-2:
     container_name: mongo_shard2-2
@@ -177,9 +197,14 @@ services:
       - mongo_shard_data2-2:/data/db
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
+
 
 # Mongos Router
   mongos:
+    container_name: mongos_router
     build:
       context: .
       dockerfile: Dockerfile.data
@@ -188,6 +213,10 @@ services:
       - "${PORT_MONGO_ROUTER}:${PORT_MONGO_ROUTER}"
     networks:
       - mongo-network
+    attach: false
+    logging:
+      driver: "none"
+    tty: true
     depends_on:
       - mongo_config1
       - mongo_config2
@@ -201,6 +230,7 @@ services:
   nginx:
     image: nginx:latest
     container_name: nginx
+    restart: always
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certs:/etc/letsencrypt
@@ -216,6 +246,8 @@ services:
         condition: service_started
       cert-generator:
         condition: service_healthy
+    networks:
+      - mongo-network
 
 #cert generator
   cert-generator:
@@ -236,6 +268,8 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+    networks:
+      - mongo-network
 
 # extra
 volumes:
