@@ -1,4 +1,4 @@
-FROM node
+FROM node:23.10.0
 
 # name of the folder that docker will work with this app
 WORKDIR /app
@@ -11,5 +11,3 @@ COPY ./package.json .
 
 # install dependencies
 RUN npm install --dev
-
-EXPOSE 3000

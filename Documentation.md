@@ -33,3 +33,8 @@ docker exec -i mongos_router mongosh < ./mongo_init/init-mongo.js
 docker exec -i mongos_router mongosh < ./mongo_init/init-shards.js
 docker exec -i mongos_router mongosh < ./mongo_init/shard-setup.js
 ```
+
+    env_file:
+      - .env
+
+docker compose -f ./docker-compose.db.yml up -d && while true; do docker exec -it router-01 bash -c "echo 'sh.status()' | mongosh --port 27017" && break || sleep 2; done

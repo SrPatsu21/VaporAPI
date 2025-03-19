@@ -2,3 +2,5 @@
 node_modules
 certs/
 backup
+.vscode
+*.log
