@@ -1,13 +1,16 @@
 services:
-#* config_servers
+#* Config
   mongo_config1:
     container_name: mongo_config1
     build:
       context: .
       dockerfile: Dockerfile.data
-    command: mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
+    command: >
+      mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
+    # mongosh < ./app/init-mongo.js
     volumes:
       - mongo_config_data1:/data/db
+      - ./mongo_script:/app
     networks:
       - mongo-network
     attach: false
@@ -19,9 +22,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.data
-    command: mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
+    command: >
+      mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
+    # mongosh < ./app/init-mongo.js
     volumes:
       - mongo_config_data2:/data/db
+      - ./mongo_script:/app
     networks:
       - mongo-network
     attach: false
@@ -33,25 +39,31 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.data
-    command: mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
+    command: >
+      mongod --configsvr --replSet configReplSet --port ${PORT_MONGO_CONFIG} --bind_ip_all
+    # mongosh < ./app/init-mongo.js
     volumes:
       - mongo_config_data3:/data/db
+      - ./mongo_script:/app
     networks:
       - mongo-network
     attach: false
     logging:
       driver: "none"
 
-# Shard
+#* Shard
 #shard 1
   mongo_shard1-1:
     container_name: mongo_shard1-1
     build:
       context: .
       dockerfile: Dockerfile.data
-    command: mongod --shardsvr --replSet shard1ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    command: >
+      mongod --shardsvr --replSet shard1ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    # mongosh < ./app/init-shards.js
     volumes:
       - mongo_shard_data1-1:/data/db
+      - ./mongo_script:/app
     networks:
       - mongo-network
     attach: false
@@ -63,9 +75,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.data
-    command: mongod --shardsvr --replSet shard1ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    command: >
+      mongod --shardsvr --replSet shard1ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    # mongosh < ./app/init-shards.js
     volumes:
       - mongo_shard_data1-2:/data/db
+      - ./mongo_script:/app
     networks:
       - mongo-network
     attach: false
@@ -78,9 +93,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.data
-    command: mongod --shardsvr --replSet shard2ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    command: >
+      mongod --shardsvr --replSet shard1ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    # mongosh < ./app/init-shards.js
     volumes:
       - mongo_shard_data2-1:/data/db
+      - ./mongo_script:/app
     networks:
       - mongo-network
     attach: false
@@ -92,9 +110,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.data
-    command: mongod --shardsvr --replSet shard2ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    command: >
+      mongod --shardsvr --replSet shard1ReplSet --port ${PORT_MONGO_SHARD} --bind_ip_all
+    # mongosh < ./script/init-shards.js
     volumes:
       - mongo_shard_data2-2:/data/db
+      - ./mongo_script:/app
     networks:
       - mongo-network
     attach: false
@@ -108,12 +129,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.data
-    # command: >
-    #   mongos --configdb configReplSet/mongo_config1:${PORT_MONGO_CONFIG},mongo_config2:${PORT_MONGO_CONFIG},mongo_config3:${PORT_MONGO_CONFIG} --bind_ip_all --port ${PORT_MONGO_ROUTER} --quiet
-    #   & sleep 10 && mongos < /app/configure_shards.js"
-    # command: >
-    #   mongos --configdb configReplSet/mongo_config1:27017,mongo_config2:27017,mongo_config3:27017 --bind_ip_all --port 27017 --quiet
-    #   & sleep 10 && mongos < /app/configure_shards.js"
+    command: >
+      mongos --configdb configReplSet/mongo_config1:${PORT_MONGO_CONFIG},mongo_config2:${PORT_MONGO_CONFIG},mongo_config3:${PORT_MONGO_CONFIG} --bind_ip_all --port ${PORT_MONGO_ROUTER} --quiet
+    # sleep(10) && mongosh < /app/shard-setup.js
     ports:
       - "${PORT_MONGO_ROUTER}:${PORT_MONGO_ROUTER}"
     networks:
@@ -154,4 +172,3 @@ volumes:
 
 networks:
   mongo-network:
-    driver: bridge

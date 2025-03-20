@@ -29,9 +29,9 @@ The config servers (config1, config2, config3) store metadata about the cluster,
 
 To init db, run:
 ```shell
-docker exec -i mongos_router mongosh < ./mongo_init/init-mongo.js
-docker exec -i mongos_router mongosh < ./mongo_init/init-shards.js
-docker exec -i mongos_router mongosh < ./mongo_init/shard-setup.js
+docker exec -i mongos_router mongosh < ./mongo_script/init-mongo.js
+docker exec -i mongos_router mongosh < ./mongo_script/init-shards.js
+docker exec -i mongos_router mongosh < ./mongo_script/shard-setup.js
 ```
 
     env_file:

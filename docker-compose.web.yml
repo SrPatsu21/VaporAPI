@@ -26,8 +26,6 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
-      mongos_router:
-        condition: service_started
 
 #API 2
   api2:
@@ -54,8 +52,6 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
-      mongos_router:
-        condition: service_started
 
 #API 3
   api3:
@@ -82,8 +78,6 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
-      mongos_router:
-        condition: service_started
 
 #Backup api
   backup_api:
@@ -116,8 +110,6 @@ services:
         condition: service_started
       cert-generator:
         condition: service_healthy
-    networks:
-      - mongo-network
     attach: false
     logging:
       driver: "none"
@@ -141,5 +133,3 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
-    networks:
-      - mongo-network

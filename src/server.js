@@ -16,8 +16,8 @@ app.get('/', (req, res) => {
 });
 
 // //* db connection
-const connectDB = require('./db');
-connectDB();
+// const connectDB = require('./db');
+// connectDB();
 
 // //* users route
 // const userRoute = require("./routes/userRoute");
