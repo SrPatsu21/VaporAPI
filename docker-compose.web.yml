@@ -48,6 +48,9 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+    attach: false
+    logging:
+      driver: "none"
 
 #API 3
   api3:
@@ -72,6 +75,9 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+    attach: false
+    logging:
+      driver: "none"
 
 #Backup api
   backup_api:

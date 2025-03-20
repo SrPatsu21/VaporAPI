@@ -15,9 +15,9 @@ app.get('/', (req, res) => {
     res.json("hello " + PORT);
 });
 
-// //* db connection
-// const connectDB = require('./db');
-// connectDB();
+//* db connection
+const connectDB = require('./db');
+connectDB();
 
 // //* users route
 // const userRoute = require("./routes/userRoute");
