@@ -21,8 +21,6 @@ services:
       - .env
     environment:
       - PORT=${PORT_API1}
-    ports:
-      - "${PORT_API1}:${PORT_API1}"
     depends_on:
       cert-generator:
         condition: service_healthy
@@ -47,8 +45,6 @@ services:
       - .env
     environment:
       - PORT=${PORT_API2}
-    ports:
-      - "${PORT_API2}:${PORT_API2}"
     depends_on:
       cert-generator:
         condition: service_healthy
@@ -73,8 +69,6 @@ services:
       - .env
     environment:
       - PORT=${PORT_API3}
-    ports:
-      - "${PORT_API3}:${PORT_API3}"
     depends_on:
       cert-generator:
         condition: service_healthy
