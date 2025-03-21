@@ -13,7 +13,7 @@ services:
       - -c
       - |
         npm install --include=dev
-        npm run dev
+        npm run ${API_MODE}
     volumes: # keep package.json updated
       - .:/app
     tty: true
@@ -24,6 +24,11 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+    # attach: false
+    # logging:
+    #   driver: "none"
+    networks:
+      bridg2mongo:
 
 #API 2
   api2:
@@ -37,7 +42,7 @@ services:
       - -c
       - |
         npm install --include=dev
-        npm run dev
+        npm run ${API_MODE}
     volumes: # keep package.json updated
       - .:/app
     tty: true
@@ -48,9 +53,11 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
-    attach: false
-    logging:
-      driver: "none"
+    # attach: false
+    # logging:
+    #   driver: "none"
+    networks:
+      bridg2mongo:
 
 #API 3
   api3:
@@ -64,7 +71,7 @@ services:
       - -c
       - |
         npm install --include=dev
-        npm run dev
+        npm run ${API_MODE}
     volumes: # keep package.json updated
       - .:/app
     tty: true
@@ -75,9 +82,11 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
-    attach: false
-    logging:
-      driver: "none"
+    # attach: false
+    # logging:
+    #   driver: "none"
+    networks:
+      bridg2mongo:
 
 #Backup api
   backup_api:
@@ -89,6 +98,9 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
+    networks:
+      bridg2mongo:
+
 
 #* NGINX
   nginx:
@@ -113,6 +125,9 @@ services:
     attach: false
     logging:
       driver: "none"
+    networks:
+      bridg2mongo:
+
 
 #cert generator
   cert-generator:
@@ -133,3 +148,9 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
+    networks:
+      bridg2mongo:
+
+networks:
+  bridg2mongo:
+    driver: bridge

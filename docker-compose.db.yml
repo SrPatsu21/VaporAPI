@@ -2,6 +2,7 @@ services:
 
 #* MONGODB CONFIGDB
   configdb-replica0:
+    container_name: configdb-replica0
     build:
       context: mongod
     command: mongod -f /etc/mongod.conf --configsvr --replSet configdb
@@ -19,6 +20,7 @@ services:
       - "27017"
 
   configdb-replica1:
+    container_name: configdb-replica1
     build:
       context: mongod
     command: mongod -f /etc/mongod.conf --configsvr --replSet configdb
@@ -36,6 +38,7 @@ services:
 
 #* MONGODB SHARD0
   shard0-replica0:
+    container_name: shard0-replica0
     build:
       context: mongod
     command: mongod -f /etc/mongod.conf --shardsvr --replSet shard0
@@ -53,6 +56,7 @@ services:
       - "27017"
 
   shard0-replica1:
+    container_name: shard0-replica1
     build:
       context: mongod
     command: mongod -f /etc/mongod.conf --shardsvr --replSet shard0
@@ -70,6 +74,7 @@ services:
 
 #* MONGODB SHARD1
   shard1-replica0:
+    container_name: shard1-replica0
     build:
       context: mongod
     command: mongod -f /etc/mongod.conf --shardsvr --replSet shard1
@@ -87,6 +92,7 @@ services:
       - "27017"
 
   shard1-replica1:
+    container_name: shard1-replica1
     build:
       context: mongod
     command: mongod -f /etc/mongod.conf --shardsvr --replSet shard1
@@ -104,6 +110,7 @@ services:
 
 #* MONGODB MONGOS ROUTERS
   mongos-router0:
+    container_name: mongos-router0
     build:
       context: mongos
     command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
@@ -118,8 +125,9 @@ services:
       - configdb-replica1
     networks:
       internalnetwork:
-        aliases:
-          - mongos-router0
+          aliases:
+            - mongos-router0
+      bridg2mongo:
     environment:
       - SHARD_LIST=shard0/shard0-replica0:27017,shard0-replica0:27017,shard0-replica0:27017;shard1/shard1-replica0:27017,shard1-replica0:27017,shard1-replica0:27017
     expose:
@@ -128,6 +136,7 @@ services:
       - "27017:27017"  # Map the host workstation's port 27017 to the docker instance exposed port 27017 for 'direct' mongos access
 
   mongos-router1:
+    container_name: mongos-router1
     build:
       context: mongos
     command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
@@ -135,8 +144,9 @@ services:
       - mongos-router1-data:/data/db
     networks:
       internalnetwork:
-        aliases:
-          - mongos-router1
+          aliases:
+            - mongos-router1
+      bridg2mongo:
     expose:
       - "27017"
     ports:
@@ -144,6 +154,8 @@ services:
 
 networks:
   internalnetwork: {}
+  bridg2mongo:
+    driver: bridge
 
 volumes:
   configdb-data-replica0:

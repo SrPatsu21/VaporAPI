@@ -19,8 +19,8 @@ app.get('/', (req, res) => {
 const connectDB = require('./db');
 connectDB();
 
-// //* users route
-// const userRoute = require("./routes/userRoute");
-// app.use("user", userRoute);
+//* users route
+const userRoute = require("./routes/userRoute");
+app.use("/user", userRoute);
 
 app.listen(PORT, () => console.log(`Server running on https://${hostname}:${PORT}`));

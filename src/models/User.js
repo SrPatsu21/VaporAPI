@@ -16,7 +16,7 @@ const createUser = async (req, res, next) => {
     try {
         const newUser = new Users(req.body);
         await newUser.save();
-        req.user = newUser;
+        req.newUser = newUser;
         next();
     } catch (error) {
         console.error(error);
