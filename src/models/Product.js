@@ -9,7 +9,13 @@ const productSchema = new Schema(
             // unique: true, // no need, MongoDB automatically ensures that
             description: "must be an ObjectId and is required",
         },
-        titel: {
+        name: {
+            type: "string",
+            required: true,
+            trim: true,
+            description: "must be a string and is required",
+        },
+        description: {
             type: "string",
             required: true,
             trim: true,
@@ -22,29 +28,18 @@ const productSchema = new Schema(
             trim: true,
             description: "must be a string and is required",
         },
-        category: {
-            type: "string",
-            required: true,
-            trim: true,
-            description: "must be a string and is required",
-        },
-        version:
-        {
-            type: "string",
-            trim: true,
-            description: "must be a string and is required",
-        },
-        tags:
-        {
-            type: [String], // Array of strings
-            default: [], // Optional; defaults to an empty array if not provided
-        },
         timesDownloaded:
         {
             type: Number,
             default: 0,
             min: 0, // Enforces non-negative values
             description: "Tracks how many times the product has been downloaded",
+        },
+        category:{
+            type: mongoose.Schema.Types.ObjectId, ref: 'titels'
+        },
+        version:{
+            type: mongoose.Schema.Types.ObjectId, ref: 'versions'
         },
         active: {
             type: Boolean,
