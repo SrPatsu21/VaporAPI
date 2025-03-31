@@ -39,13 +39,11 @@ const productSchema = new Schema(
             type: mongoose.Schema.Types.ObjectId, ref: 'Titles'
         },
         version:{
-            str: {
-                type: "string",
-                required: true,
-                trim: true,
-                maxlength: 40,
-                description: "must be a string and is required",
-            },
+            type: "string",
+            required: true,
+            trim: true,
+            maxlength: 40,
+            description: "must be a string and is required",
         },
         active: {
             type: Boolean,
