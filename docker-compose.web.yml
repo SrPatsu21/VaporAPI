@@ -53,9 +53,9 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
-    # attach: false
-    # logging:
-    #   driver: "none"
+    attach: false
+    logging:
+      driver: "none"
     networks:
       bridg2mongo:
 
@@ -82,9 +82,9 @@ services:
     depends_on:
       cert-generator:
         condition: service_healthy
-    # attach: false
-    # logging:
-    #   driver: "none"
+    attach: false
+    logging:
+      driver: "none"
     networks:
       bridg2mongo:
 

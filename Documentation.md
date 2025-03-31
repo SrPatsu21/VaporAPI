@@ -62,6 +62,11 @@ To connect to the db you will need a user. You can do this connecting to the mon
 docker exec -it mongos-router0 mongosh
 ```
 
+Chage to collection.
+```shell
+use VaporBase
+```
+
 Creating a new user.
 ```js
 db.createUser({
