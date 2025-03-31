@@ -9,7 +9,7 @@ const categorySchema = new Schema(
             // unique: true, // no need, MongoDB automatically ensures that
             description: "must be an ObjectId and is required",
         },
-        str: {
+        categorySTR: {
             type: "string",
             required: true,
             trim: true,
@@ -24,24 +24,3 @@ const Categories = mongoose.model('Categories', categorySchema);
 module.exports = {
     Categories: Categories,
 };
-
-
-
-
-const versionSchema = new Schema(
-    {
-        _id: {
-            type: "objectId",
-            auto: true,
-            // unique: true, // no need, MongoDB automatically ensures that
-            description: "must be an ObjectId and is required",
-        },
-        str: {
-            type: "string",
-            required: true,
-            trim: true,
-            maxlength: 40,
-            description: "must be a string and is required",
-        },
-    }
-);

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const titelSchema = new Schema(
+const titleSchema = new Schema(
     {
         _id: {
             type: "objectId",
@@ -9,18 +9,26 @@ const titelSchema = new Schema(
             // unique: true, // no need, MongoDB automatically ensures that
             description: "must be an ObjectId and is required",
         },
-        str: {
+        titleSTR: {
             type: "string",
             required: true,
             trim: true,
             description: "must be a string and is required",
         },
+        category:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Categories'
+        },
+        tags: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Tags'
+        }],
     }
 );
 
-const Titels = mongoose.model('Titels', titelSchema);
+const Titles = mongoose.model('Titles', titleSchema);
 
 // Export the model
 module.exports = {
-    Titels: Titels,
+    Titles: Titles,
 };

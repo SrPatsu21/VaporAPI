@@ -9,7 +9,7 @@ const tagSchema  = new Schema(
             // unique: true, // no need, MongoDB automatically ensures that
             description: "must be an ObjectId and is required",
         },
-        tag: {
+        tagSTR: {
             type: "string",
             required: true,
             trim: true,
@@ -19,9 +19,9 @@ const tagSchema  = new Schema(
     }
 );
 
-const Categories = mongoose.model('Categories', categorySchema);
+const Tags = mongoose.model('Tags', tagSchema);
 
 // Export the model
 module.exports = {
-    Categories: Categories,
+    Tags: Tags,
 };

@@ -35,11 +35,17 @@ const productSchema = new Schema(
             min: 0, // Enforces non-negative values
             description: "Tracks how many times the product has been downloaded",
         },
-        category:{
-            type: mongoose.Schema.Types.ObjectId, ref: 'titels'
+        title:{
+            type: mongoose.Schema.Types.ObjectId, ref: 'Titles'
         },
         version:{
-            type: mongoose.Schema.Types.ObjectId, ref: 'versions'
+            str: {
+                type: "string",
+                required: true,
+                trim: true,
+                maxlength: 40,
+                description: "must be a string and is required",
+            },
         },
         active: {
             type: Boolean,
