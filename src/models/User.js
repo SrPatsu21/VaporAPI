@@ -3,11 +3,15 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema(
     {
-    userId: Number,  // Must be used as shard key!
-    name: String,
-    email: String,
-    }
+        userId: { type: Schema.Types.ObjectId, auto: true }, // Shard key
+        name: { type: String, required: true },
+        email: { type: String, required: true}, // Ensure email uniqueness
+    },
+    { collection: "Users" },
+    { timestamps: true },
 );
+// Use `userId` as the shard key for even distribution
+userSchema.index({ userId: "hashed" });
 
 const Users = mongoose.model("Users", userSchema);
 

@@ -6,9 +6,11 @@ const titleSchema = new Schema(
         _id: {
             type: "objectId",
             auto: true,
-            // unique: true, // no need, MongoDB automatically ensures that
+            required: true,
+            unique: true,
+            index: true,
             description: "must be an ObjectId and is required",
-        },
+        }, //Shard Key
         titleSTR: {
             type: "string",
             required: true,

@@ -8,9 +8,8 @@ const router = express.Router();
 curl -k -X POST https://localhost/user/ \
     -H "Content-Type: application/json" \
     -d '{
-        "name": "John Doe",
-        "email": "johndoe@example.com",
-        "password": "securepassword"
+        "name": "johndoe@example.com",
+        "email": "securepassword"
         }'
 */
 router.post("/", createUser, async (req, res) => {

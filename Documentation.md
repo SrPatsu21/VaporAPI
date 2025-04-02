@@ -49,7 +49,7 @@ Before the first run, you can just run.
 docker compose -f ./docker-compose.db.yml up
 ```
 
-Or if you don’t want to see the log (-d for detach).
+Or if you don`t want to see the log (-d for detach).
 
 ```bash
 docker compose -f ./docker-compose.db.yml up -d
@@ -61,20 +61,30 @@ To connect to the db you will need a user. You can do this connecting to the mon
 ```bash
 docker exec -it mongos-router0 mongosh
 ```
-
-Chage to collection.
+Change and create database
 ```shell
 use VaporBase
 ```
-
-Creating a new user.
-```js
+Create user for api
+```shell
 db.createUser({
   user: "api_user",
   pwd: "strong_password",
   roles: [{ role: "readWrite", db: "VaporBase" }]
 })
 ```
+Enable sharding
+```shell
+sh.enableSharding("VaporBase");
+```
+```shell
+sh.setBalancerState(true);
+```
+Configure sharding
+```shell
+sh.shardCollection("VaporBase.Users", { userId: "hashed" });
+```
+
   More about roles.
   |    Role     |                                  Description                                    |
   |:---------:  |:------------------------------------------------------------------------------: |
