@@ -4,20 +4,22 @@ const { Schema } = mongoose;
 const tagSchema  = new Schema(
     {
         _id: {
-            type: "objectId",
+            type: Schema.Types.ObjectId,
             auto: true,
-            // unique: true, // no need, MongoDB automatically ensures that
             description: "must be an ObjectId and is required",
         },
         tagSTR: {
             type: "string",
             required: true,
             trim: true,
-            maxlength: 40,
+            unique: true,
+            maxlength: 48,
             description: "must be a string and is required",
         },
-    }
+    },
+    { collection: "Tags" },
 );
+tagSchema.index({ _id: "hashed" });
 
 const Tags = mongoose.model('Tags', tagSchema);
 

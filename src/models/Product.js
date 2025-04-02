@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+const MAX_SIZE_MB = 2; // 2MB max file size
+const MAX_WIDTH = 1920;
+const MAX_HEIGHT = 1080;
+const ALLOWED_FORMATS = ['jpeg', 'jpg', 'png']; // Allowed formats
+
 const productSchema = new Schema(
     {
         _id: {
-            type: "objectId",
+            type: Schema.Types.ObjectId,
             auto: true,
-            // unique: true, // no need, MongoDB automatically ensures that
             description: "must be an ObjectId and is required",
         },
         name: {
@@ -18,13 +22,6 @@ const productSchema = new Schema(
         description: {
             type: "string",
             required: true,
-            trim: true,
-            description: "must be a string and is required",
-        },
-        img_id: {
-            type: "string",
-            required: true,
-            default: "0",
             trim: true,
             description: "must be a string and is required",
         },
@@ -51,10 +48,9 @@ const productSchema = new Schema(
             description: "Indicates if the user account is active",
         }
     },
-    {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
-    }
+    {collection: "Products", timestamps: true}
 )
+productSchema.index({ _id: "hashed" });
 
 const Products = mongoose.model('Products', productSchema);
 
