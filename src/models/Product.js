@@ -35,6 +35,9 @@ const productSchema = new Schema(
         title:{
             type: mongoose.Schema.Types.ObjectId, ref: 'Titles'
         },
+        owner:{
+            type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        },
         version:{
             type: "string",
             required: true,

@@ -7,19 +7,19 @@ const hostname = "localhost";
 
 const app = express();
 
+//* proxy
+app.set("trust proxy", true);
+
 //* Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.get('/', (req, res) => {
-    res.json("hello " + PORT);
-});
 
 //* db connection
 const connectDB = require('./db');
 connectDB();
 
-//* users route
+//* routes
+// users route
 const userRoute = require("./routes/userRoute");
 app.use("/user", userRoute);
 
