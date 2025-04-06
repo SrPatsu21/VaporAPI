@@ -1,5 +1,5 @@
 const { Users } = require('./path-to-your-user-model');
-const bcrypt = require('bcrypt');
+const { comparePasswords } = require('../utils/passwordUtils');
 const jwt = require('jsonwebtoken');
 
 // In-memory brute-force tracker: { [ip]: { attempts, lastAttempt } }
@@ -36,7 +36,7 @@ const login = async (req, res) => {
         const user = await Users.findOne({ email });
         // TODO verify if is a mistake, becase it will find user first and u will know what is wrong
         if (!user) return res.status(401).json({ message: "Invalid email or password" });
-        const match = await bcrypt.compare(password, user.password);
+        const match = await comparePasswords(password, user.password);
         if (!match) return res.status(401).json({ message: "Invalid email or password" });
         // Reset attempts on success
         loginAttempts[ip] = { attempts: 0, lastAttempt: now };
