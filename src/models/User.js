@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const { hashPassword } = require('./utils/passwordUtils');
+const { hashPassword } = require('../utils/passwordUtils');
 
 const userSchema = new Schema(
     {
@@ -193,6 +193,17 @@ const searchUser = async (req, res, next) => {
     }
 };
 
+//won't use
+const getAllUsers = async (req, res, next) => {
+    try {
+        const users = await Users.find({}, "-password"); // Exclude password from results
+        req.users = users; // Attach to request for later use
+        next();
+    } catch (err) {
+        next(err); // Pass to error-handling middleware
+    }
+};
+
 //* Export the model
 module.exports = {
     Users: Users,
@@ -204,4 +215,5 @@ module.exports = {
     deleteUser,
     getUser,
     searchUser,
+    getAllUsers,
 }

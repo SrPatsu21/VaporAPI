@@ -1,4 +1,4 @@
-const { Users } = require('./path-to-your-user-model');
+const { Users } = require('../models/User');
 const { comparePasswords } = require('../utils/passwordUtils');
 const jwt = require('jsonwebtoken');
 
