@@ -19,7 +19,7 @@ const tagSchema  = new Schema(
     },
     { collection: "Tags" },
 );
-tagSchema.index({ _id: "hashed" });
+tagSchema.index({ tagSTR: 1 });
 
 const Tags = mongoose.model('Tags', tagSchema);
 

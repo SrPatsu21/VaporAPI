@@ -83,6 +83,11 @@ sh.setBalancerState(true);
 Configure sharding
 ```shell
 sh.shardCollection("VaporBase.Users", { username: 1 })
+sh.shardCollection("VaporBase.Categories", { categorySTR: 1 })
+sh.shardCollection("VaporBase.Products", { _id: "hashed" })
+sh.shardCollection("VaporBase.Tags", { tagSTR: 1 })
+sh.shardCollection("VaporBase.Titles", { titleSTR: 1 })
+
 ```
 
   More about roles.
