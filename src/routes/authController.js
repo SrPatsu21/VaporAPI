@@ -11,8 +11,8 @@ const WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 curl -k -X POST https://localhost/login \
 -H "Content-Type: application/json" \
 -d '{
-    "email": "user@example.com",
-    "password": "UserStrongP@ss123"
+    "username": "johndoe",
+    "password": "securepassword"
 }'
 */
 const login = async (req, res) => {
@@ -31,18 +31,18 @@ const login = async (req, res) => {
             message: "Too many login attempts. Please try again after 5 minutes."
         });
     }
-    const { email, password } = req.body;
+    const { username, password } = req.body;
     try {
-        const user = await Users.findOne({ email });
+        const user = await Users.findOne({ username });
         // TODO verify if is a mistake, becase it will find user first and u will know what is wrong
-        if (!user) return res.status(401).json({ message: "Invalid email or password" });
+        if (!user) return res.status(401).json({ message: "Invalid user name or password" });
         const match = await comparePasswords(password, user.password);
-        if (!match) return res.status(401).json({ message: "Invalid email or password" });
+        if (!match) return res.status(401).json({ message: "Invalid user name or password" });
         // Reset attempts on success
         loginAttempts[ip] = { attempts: 0, lastAttempt: now };
         const payload = {
             userId: user._id,
-            email: user.email,
+            username: user.username,
             isAdmin: user.isAdmin,
         };
         const token = jwt.sign(payload, process.env.JWT_SECRET, {

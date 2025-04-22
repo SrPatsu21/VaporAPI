@@ -32,7 +32,6 @@ const titleSchema = new Schema(
     },
     { collection: "Titles", timestamps: true },
 );
-titleSchema.index({ titleSTR: 1 });
 
 const Titles = mongoose.model('Titles', titleSchema);
 

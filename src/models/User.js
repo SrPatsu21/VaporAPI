@@ -42,9 +42,6 @@ const userSchema = new Schema(
     { timestamps: true },
 );
 
-// Use `_id` as the shard key for even distribution
-userSchema.index({ username: 1 }, { unique: true });
-
 const Users = mongoose.model("Users", userSchema);
 
 //* functions

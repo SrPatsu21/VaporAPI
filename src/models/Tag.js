@@ -19,7 +19,6 @@ const tagSchema  = new Schema(
     },
     { collection: "Tags" },
 );
-tagSchema.index({ tagSTR: 1 });
 
 const Tags = mongoose.model('Tags', tagSchema);
 

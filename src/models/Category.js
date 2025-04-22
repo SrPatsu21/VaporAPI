@@ -19,7 +19,6 @@ const categorySchema = new Schema(
     },
     {collection: "Categories"}
 );
-categorySchema.index({ categorySTR: 1 });
 
 const Categories = mongoose.model('Categories', categorySchema);
 
