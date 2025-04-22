@@ -82,7 +82,7 @@ sh.setBalancerState(true);
 ```
 Configure sharding
 ```shell
-sh.shardCollection("VaporBase.Users", { _id: "hashed" });
+sh.shardCollection("VaporBase.Users", { username: 1 })
 ```
 
   More about roles.

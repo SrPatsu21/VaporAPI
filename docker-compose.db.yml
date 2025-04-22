@@ -135,22 +135,23 @@ services:
     ports:
       - "27017:27017"  # Map the host workstation's port 27017 to the docker instance exposed port 27017 for 'direct' mongos access
 
-  mongos-router1:
-    container_name: mongos-router1
-    build:
-      context: mongos
-    command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
-    volumes:
-      - mongos-router1-data:/data/db
-    networks:
-      internalnetwork:
-          aliases:
-            - mongos-router1
-      bridg2mongo:
-    expose:
-      - "27017"
-    ports:
-      - "27018:27017"  # Map the host workstation's port 27018 to the docker instance exposed port 27017 for 'direct' mongos access
+  #! we wont use for now
+  # mongos-router1:
+  #   container_name: mongos-router1
+  #   build:
+  #     context: mongos
+  #   command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
+  #   volumes:
+  #     - mongos-router1-data:/data/db
+  #   networks:
+  #     internalnetwork:
+  #         aliases:
+  #           - mongos-router1
+  #     bridg2mongo:
+  #   expose:
+  #     - "27017"
+  #   ports:
+  #     - "27018:27017"  # Map the host workstation's port 27018 to the docker instance exposed port 27017 for 'direct' mongos access
 
 networks:
   internalnetwork: {}

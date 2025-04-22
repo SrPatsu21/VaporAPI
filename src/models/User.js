@@ -13,7 +13,7 @@ const userSchema = new Schema(
             type: String,
             trim: true,
             required: true,
-            unique: true
+            unique: true,
         },
         password: {
             type: String,
@@ -23,7 +23,6 @@ const userSchema = new Schema(
         email: {
             type: "string",
             required: true,
-            unique: true,
             trim: true,
             validate: {
                 validator: function (v) {
@@ -43,28 +42,23 @@ const userSchema = new Schema(
     { timestamps: true },
 );
 
-// Use `userId` as the shard key for even distribution
-userSchema.index({ userId: "hashed" });
-
-// Hash password before saving
-userSchema.pre('save', async function(next) {
-    if (!this.isModified('password')) return next();
-
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-});
+// Use `_id` as the shard key for even distribution
+userSchema.index({ username: 1 }, { unique: true });
 
 const Users = mongoose.model("Users", userSchema);
 
 //* functions
+
+/*
+'{
+    "username": "johndoe",
+    "email": "johndoe@example.com"
+    "password": "securepassword"
+}'
+*/
 const createUser = async (req, res, next) => {
     try {
-        const { username, email, password, isAdmin } = req.body;
-
-        // Check for existing user
-        const existing = await Users.findOne({ email });
-        if (existing) return res.status(409).json({ message: "Email already exists" });
+        const { username, email, password} = req.body;
 
         // Hash password
         const hashedPassword = await hashPassword(password);
@@ -74,7 +68,6 @@ const createUser = async (req, res, next) => {
             username,
             email,
             password: hashedPassword,
-            isAdmin,
         });
 
         await user.save();
