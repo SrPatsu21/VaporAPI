@@ -6,7 +6,8 @@ const os = require("os");
 //* Process internal network
 const PORT = process.env.PORT || 3001;
 const hostname = "localhost";
-const numCPUs = os.cpus().length;
+// const numCPUs = os.cpus().length;
+const numCPUs = 1;
 
 //* DB
 const connectDB = require('./db');

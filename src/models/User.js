@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const { Types } = require('mongoose');
+const { ObjectId } = require('mongoose');
 const { hashPassword } = require('../utils/passwordUtils');
 
 const userSchema = new Schema(
@@ -38,20 +40,35 @@ const userSchema = new Schema(
             description: "Indicates if the user is an admin",
         },
     },
-    { collection: "Users" },
     { timestamps: true },
+    { collection: "Users" },
 );
 
 const Users = mongoose.model("Users", userSchema);
 
 //* functions
 
+const authorizeSelf = (req, res, next) => {
+    const userId = req.user?.id; // ID from authenticated user
+    const targetId = req.params.id; // ID from route param
+
+    // if (!userId) {
+    //     return res.status(401).json({ message: "Unauthorized: no user info found" });
+    // }
+
+    // if (userId !== targetId) {
+    //     return res.status(403).json({ message: "Forbidden: you can only access your own data" });
+    // }
+
+    next();
+};
+
 /*
-'{
+{
     "username": "johndoe",
     "email": "johndoe@example.com"
     "password": "securepassword"
-}'
+}
 */
 const createUser = async (req, res, next) => {
     try {
@@ -76,14 +93,31 @@ const createUser = async (req, res, next) => {
     }
 };
 
+/*
+{
+    "username": "johndo",
+    "email": "johndo@example.com",
+}
+*/
 const updateUser = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const updates = req.body;
-        if (updates.password) delete updates.password;
+        const id = req.params.id;
+        const updates = {}
+        updates.username = req.body.username;
+        updates.email = req.body.email;
 
-        const updated = await Users.findByIdAndUpdate(id, updates, { new: true });
-        if (!updated) return res.status(404).json({ message: "User not found" });
+        const test1 = new mongoose.Types.ObjectId('6807c6dc0fe1622d9a0581fe')
+        const test2 = new Types.ObjectId("6807c6dc0fe1622d9a0581fe")
+        // const test3 = new ObjectId("6807c6dc0fe1622d9a0581fe")
+
+        console.log( test2 )
+        console.log( await Users.findOne({ _id: test2 }))
+        const updated = await Users.findOneAndUpdate(
+            { _id: test2 },
+            updates,
+            { new: true }
+        );
+        if (!updated) return res.status(404).json({ message: "User not found or no data"});
 
         req.updatedUser = updated;
         next();
@@ -206,4 +240,5 @@ module.exports = {
     getUser,
     searchUser,
     getAllUsers,
+    authorizeSelf,
 }

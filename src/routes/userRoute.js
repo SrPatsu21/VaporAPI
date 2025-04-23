@@ -1,9 +1,9 @@
 const express = require('express');
-const {createUser, getAllUsers} = require('../models/User')
+const {createUser, patchUser, updateUser, changePassword, softDeleteUser, deleteUser, getUser, searchUser, getAllUsers, authorizeSelf} = require('../models/User')
 
 const router = express.Router();
 
-// Create a new user
+//* Create a new user
 /*
 curl -k -X POST https://localhost/user/ \
     -H "Content-Type: application/json" \
@@ -16,13 +16,50 @@ curl -k -X POST https://localhost/user/ \
 router.post("/", createUser, async (req, res) => {
     try {
         res.status(201).json(req.createdUser);
-        console.log(req.createdUser)
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
-// Get all users
+//* Update user
+//change the id!
+/*
+curl -k -X PUT https://localhost/user/6807c6dc0fe1622d9a0581fe \
+    -H "Content-Type: application/json" \
+    -d '{
+        "username": "johndo",
+        "email": "johndo@example.br"
+    }'
+*/
+router.put("/:id", authorizeSelf, updateUser, async (req, res) => {
+    try {
+        res.status(201).json(req.updatedUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+
+//* patch user
+//change the id!
+/*
+curl -k -X PUT https://localhost/user/6807c6dc0fe1622d9a0581fe \
+    -H "Content-Type: application/json" \
+    -d '{
+        "username": "johndo",
+        "email": "johndo@example.com",
+        "password": "securepassword"
+    }'
+*/
+router.patch("/:id", patchUser, async (req, res) => {
+    try {
+        res.status(201).json(req.updatedUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//* Get all users
 /*
 curl -k -X GET https://localhost/user/all \
     -H "Content-Type: application/json"
