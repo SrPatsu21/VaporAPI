@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const { Types } = require('mongoose');
-const { ObjectId } = require('mongoose');
 const { hashPassword } = require('../utils/passwordUtils');
 
 const userSchema = new Schema(
@@ -40,8 +38,7 @@ const userSchema = new Schema(
             description: "Indicates if the user is an admin",
         },
     },
-    { timestamps: true },
-    { collection: "Users" },
+    { timestamps: true, collection: "Users" },
 );
 
 const Users = mongoose.model("Users", userSchema);
@@ -63,6 +60,7 @@ const authorizeSelf = (req, res, next) => {
     next();
 };
 
+// TODO block ban email
 /*
 {
     "username": "johndoe",
@@ -101,19 +99,19 @@ const createUser = async (req, res, next) => {
 */
 const updateUser = async (req, res, next) => {
     try {
+        if (!req.body.username || !req.body.email) {
+            return res.status(400).json({
+                error: "Username and email are required."
+            });
+        }
+
         const id = req.params.id;
         const updates = {}
         updates.username = req.body.username;
         updates.email = req.body.email;
 
-        const test1 = new mongoose.Types.ObjectId('6807c6dc0fe1622d9a0581fe')
-        const test2 = new Types.ObjectId("6807c6dc0fe1622d9a0581fe")
-        // const test3 = new ObjectId("6807c6dc0fe1622d9a0581fe")
-
-        console.log( test2 )
-        console.log( await Users.findOne({ _id: test2 }))
-        const updated = await Users.findOneAndUpdate(
-            { _id: test2 },
+        const updated = await Users.findByIdAndUpdate(
+            id,
             updates,
             { new: true }
         );
@@ -128,14 +126,19 @@ const updateUser = async (req, res, next) => {
 
 const patchUser = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const user = await Users.findById(id);
-        if (!user) return res.status(404).json({ message: "User not found" });
+        const id = req.params.id;
+        const updates = {}
+        updates.username = req.body.username;
+        updates.email = req.body.email;
 
-        Object.assign(user, req.body);
-        await user.save();
+        const patched = await Users.findByIdAndUpdate(
+            id,
+            updates,
+            { new: true }
+        );
+        if (!patched) return res.status(404).json({ message: "User not found or no data"});
 
-        req.patchedUser = user;
+        req.patchedUser = patched;
         next();
     } catch (err) {
         next(err);

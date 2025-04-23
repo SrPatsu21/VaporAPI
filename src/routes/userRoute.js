@@ -24,7 +24,7 @@ router.post("/", createUser, async (req, res) => {
 //* Update user
 //change the id!
 /*
-curl -k -X PUT https://localhost/user/6807c6dc0fe1622d9a0581fe \
+curl -k -X PUT https://localhost/user/68096a0e8e27d34465771f40 \
     -H "Content-Type: application/json" \
     -d '{
         "username": "johndo",
@@ -43,17 +43,16 @@ router.put("/:id", authorizeSelf, updateUser, async (req, res) => {
 //* patch user
 //change the id!
 /*
-curl -k -X PUT https://localhost/user/6807c6dc0fe1622d9a0581fe \
+curl -k -X PATCH https://localhost/user/68096a0e8e27d34465771f40 \
     -H "Content-Type: application/json" \
     -d '{
         "username": "johndo",
-        "email": "johndo@example.com",
-        "password": "securepassword"
+        "email": "johndo@example.com"
     }'
 */
 router.patch("/:id", patchUser, async (req, res) => {
     try {
-        res.status(201).json(req.updatedUser);
+        res.status(201).json(req.patchedUser);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
