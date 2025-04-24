@@ -51,16 +51,12 @@ const Users = mongoose.model("Users", userSchema);
 //* functions
 
 const authorizeSelf = (req, res, next) => {
-    const userId = req.user?.id; // ID from authenticated user
+    const userId = req.user?.userId; // ID from authenticated user
     const targetId = req.params.id; // ID from route param
 
-    // if (!userId) {
-    //     return res.status(401).json({ message: "Unauthorized: no user info found" });
-    // }
+    if (!userId) return res.status(401).json({ message: "Unauthorized: no user info found" });
 
-    // if (userId !== targetId) {
-    //     return res.status(403).json({ message: "Forbidden: you can only access your own data" });
-    // }
+    if (userId !== targetId) return res.status(403).json({ message: "Forbidden: you can only access your own data" });
 
     next();
 };
@@ -81,7 +77,7 @@ const createUser = async (req, res, next) => {
 
         if(password != passwordConfirm) return res.status(400).json({ message: 'The new password and confirmation do not match' });
 
-        if(isSafePassword(password)) return res.status(400).json({ message: 'The new password need: minimum 8 characters; at least one lowercase, uppercase, digit and special char (not allowed:($, .))' });
+        if(!isSafePassword(password)) return res.status(400).json({ message: 'The new password need: minimum 8 characters; at least one lowercase, uppercase, digit and special char (not allowed:($, .))' });
 
 
         // Hash password

@@ -28,7 +28,7 @@ if (cluster.isMaster) {
     });
 
 } else {
-    //* Worker process runs the Express app
+//* Worker process runs the Express app
     const app = express();
 
     app.set("trust proxy", true);
@@ -38,8 +38,12 @@ if (cluster.isMaster) {
 
     connectDB();
 
+    //* routes:
     const userRoute = require("./routes/userRoute");
     app.use("/user", userRoute);
+
+    const { login } = require("./routes/authController");
+    app.use("/", login);
 
     app.listen(PORT, () => {
         console.log(`Worker ${process.pid} running at https://${hostname}:${PORT}`);

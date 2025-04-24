@@ -1,5 +1,6 @@
 // TODO add loggin middleware
 const express = require('express');
+const {authenticate, isAdmin} = require('./authController.js')
 const {createUser, patchUser, updateUser, changePassword, softDeleteUser, deleteUser, getUser, searchUser, getAllUsers, authorizeSelf} = require('../models/User')
 
 const router = express.Router();
@@ -10,8 +11,8 @@ curl -k -X POST https://localhost/user/ \
     -H "Content-Type: application/json" \
     -d '{
         "username": "johndoe",
-        "email": "johndoe@example.com"
-        "password": "Secure_password1"
+        "email": "johndoe@example.com",
+        "password": "Secure_password1",
         "passwordConfirm": "Secure_password1"
     }'
 */
@@ -37,16 +38,17 @@ router.get("/:id", getUser, async (req, res) => {
 });
 
 //* Update user
-//change the id!
+//change the id and token!
 /*
 curl -k -X PUT https://localhost/user/68096a0e8e27d34465771f40 \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer TOKEN_HERE" \
     -d '{
         "username": "johndo",
         "email": "johndo@example.br"
     }'
 */
-router.put("/:id", authorizeSelf, updateUser, async (req, res) => {
+router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => {
     try {
         res.status(201).json(req.updatedUser);
     } catch (error) {
@@ -56,16 +58,17 @@ router.put("/:id", authorizeSelf, updateUser, async (req, res) => {
 
 
 //* patch user
-//change the id!
+//change the id and TOKEN!
 /*
 curl -k -X PATCH https://localhost/user/68096a0e8e27d34465771f40 \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer TOKEN_HERE" \
     -d '{
         "username": "johndo",
         "email": "johndo@example.com"
     }'
 */
-router.patch("/:id", authorizeSelf, patchUser, async (req, res) => {
+router.patch("/:id", authenticate, authorizeSelf, patchUser, async (req, res) => {
     try {
         res.status(201).json(req.patchedUser);
     } catch (error) {
@@ -74,17 +77,18 @@ router.patch("/:id", authorizeSelf, patchUser, async (req, res) => {
 });
 
 //* change password
-//change the id!
+//change the id and TOKEN!
 /*
 curl -k -X PATCH https://localhost/user/changepassword/68096a0e8e27d34465771f40 \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer TOKEN_HERE" \
     -d '{
         "oldPassword": "Secure_password1",
         "newPassword": "Secure_password2",
         "newPasswordConfirm": "Secure_password2"
     }'
 */
-router.patch("/changepassword/:id", authorizeSelf, changePassword, async (req, res) => {
+router.patch("/changepassword/:id", authenticate, authorizeSelf, changePassword, async (req, res) => {
     try {
         res.status(201).json("Password changed");
     } catch (error) {
@@ -93,12 +97,13 @@ router.patch("/changepassword/:id", authorizeSelf, changePassword, async (req, r
 });
 
 //* soft delete user
-//change the id!
+//change the id and TOKEN!
 /*
 curl -k -X DELETE https://localhost/user/68096a0e8e27d34465771f40 \
+    -H "Authorization: Bearer TOKEN_HERE" \
     -H "Content-Type: application/json"
 */
-router.delete("/:id", authorizeSelf, softDeleteUser, async (req, res) => {
+router.delete("/:id", authenticate, authorizeSelf, softDeleteUser, async (req, res) => {
     try {
         res.status(201).json("User deactivated: " + req.softDeletedUser);
     } catch (error) {

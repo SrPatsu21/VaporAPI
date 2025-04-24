@@ -1,5 +1,6 @@
 const { Users } = require('../models/User');
 const { comparePasswords } = require('../utils/passwordUtils');
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 // In-memory brute-force tracker: { [ip]: { attempts, lastAttempt } }
@@ -7,12 +8,13 @@ const loginAttempts = {};
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 
+//! LOGOUT only on client side
 /*
 curl -k -X POST https://localhost/login \
 -H "Content-Type: application/json" \
 -d '{
     "username": "johndoe",
-    "password": "securepassword"
+    "password": "Secure_password1"
 }'
 */
 const login = async (req, res) => {
