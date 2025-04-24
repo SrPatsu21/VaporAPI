@@ -1,3 +1,4 @@
+// TODO add loggin middleware
 const express = require('express');
 const {createUser, patchUser, updateUser, changePassword, softDeleteUser, deleteUser, getUser, searchUser, getAllUsers, authorizeSelf} = require('../models/User')
 
@@ -9,13 +10,27 @@ curl -k -X POST https://localhost/user/ \
     -H "Content-Type: application/json" \
     -d '{
         "username": "johndoe",
-        "email": "johndoe@example.com",
-        "password": "securepassword"
+        "email": "johndoe@example.com"
+        "password": "Secure_password1"
+        "passwordConfirm": "Secure_password1"
     }'
 */
 router.post("/", createUser, async (req, res) => {
     try {
         res.status(201).json(req.createdUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//* Get user
+/*
+curl -k -X GET https://localhost/user/68096a0e8e27d34465771f40 \
+    -H "Content-Type: application/json"
+*/
+router.get("/:id", getUser, async (req, res) => {
+    try {
+        res.status(201).json(req.foundUser);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -50,7 +65,7 @@ curl -k -X PATCH https://localhost/user/68096a0e8e27d34465771f40 \
         "email": "johndo@example.com"
     }'
 */
-router.patch("/:id", patchUser, async (req, res) => {
+router.patch("/:id", authorizeSelf, patchUser, async (req, res) => {
     try {
         res.status(201).json(req.patchedUser);
     } catch (error) {
@@ -58,16 +73,36 @@ router.patch("/:id", patchUser, async (req, res) => {
     }
 });
 
-//* Get all users
+//* change password
+//change the id!
 /*
-curl -k -X GET https://localhost/user/all \
+curl -k -X PATCH https://localhost/user/changepassword/68096a0e8e27d34465771f40 \
+    -H "Content-Type: application/json" \
+    -d '{
+        "oldPassword": "Secure_password1",
+        "newPassword": "Secure_password2",
+        "newPasswordConfirm": "Secure_password2"
+    }'
+*/
+router.patch("/changepassword/:id", authorizeSelf, changePassword, async (req, res) => {
+    try {
+        res.status(201).json("Password changed");
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//* soft delete user
+//change the id!
+/*
+curl -k -X DELETE https://localhost/user/68096a0e8e27d34465771f40 \
     -H "Content-Type: application/json"
 */
-router.get("/all", getAllUsers, async (req, res) => {
+router.delete("/:id", authorizeSelf, softDeleteUser, async (req, res) => {
     try {
-        res.json(req.users);
+        res.status(201).json("User deactivated: " + req.softDeletedUser);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
 });
 

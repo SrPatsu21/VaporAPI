@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-const { hashPassword } = require('../utils/passwordUtils');
+const { hashPassword, comparePasswords, isSafePassword } = require('../utils/passwordUtils');
 
 const userSchema = new Schema(
     {
@@ -18,7 +18,7 @@ const userSchema = new Schema(
         password: {
             type: String,
             required: true,
-            description: "must be a string, at least 8 characters, and is required",
+            description: "must be a string, at least 8 characters, , and is required",
         },
         email: {
             type: "string",
@@ -31,6 +31,11 @@ const userSchema = new Schema(
                 message: (props) => `${props.value} is not a valid email!`,
             },
             description: "must be a valid email and is required",
+        },
+        deleted: {
+            type: Boolean,
+            default: false, // Default is non-deleted user
+            description: "Indicates if the user was deactivat",
         },
         isAdmin: {
             type: Boolean,
@@ -61,16 +66,23 @@ const authorizeSelf = (req, res, next) => {
 };
 
 // TODO block ban email
+// TODO avoid nosql injection
 /*
 {
     "username": "johndoe",
     "email": "johndoe@example.com"
-    "password": "securepassword"
+    "password": "Secure_password1"
+    "passwordConfirm": "Secure_password1"
 }
 */
 const createUser = async (req, res, next) => {
     try {
-        const { username, email, password} = req.body;
+        const { username, email, password, passwordConfirm} = req.body;
+
+        if(password != passwordConfirm) return res.status(400).json({ message: 'The new password and confirmation do not match' });
+
+        if(isSafePassword(password)) return res.status(400).json({ message: 'The new password need: minimum 8 characters; at least one lowercase, uppercase, digit and special char (not allowed:($, .))' });
+
 
         // Hash password
         const hashedPassword = await hashPassword(password);
@@ -84,7 +96,24 @@ const createUser = async (req, res, next) => {
 
         await user.save();
 
+        // remove password field
+        delete user.password;
+
         req.createdUser = user;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
+
+const getUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const user = await Users.findById(id).select("-password");
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        req.foundUser = user;
         next();
     } catch (err) {
         next(err);
@@ -117,6 +146,9 @@ const updateUser = async (req, res, next) => {
         );
         if (!updated) return res.status(404).json({ message: "User not found or no data"});
 
+        // remove password field
+        delete updated.password;
+
         req.updatedUser = updated;
         next();
     } catch (err) {
@@ -124,6 +156,12 @@ const updateUser = async (req, res, next) => {
     }
 };
 
+/*
+{
+    "username": "johndo",
+    "email": "johndo@example.com",
+}
+*/
 const patchUser = async (req, res, next) => {
     try {
         const id = req.params.id;
@@ -138,6 +176,9 @@ const patchUser = async (req, res, next) => {
         );
         if (!patched) return res.status(404).json({ message: "User not found or no data"});
 
+        // remove password field
+        delete patched.password;
+
         req.patchedUser = patched;
         next();
     } catch (err) {
@@ -145,21 +186,31 @@ const patchUser = async (req, res, next) => {
     }
 };
 
+/*
+{
+    "oldPassword": "Secure_password1",
+    "newPassword": "Secure_password2",
+    "newPasswordConfirm": "Secure_password2"
+}
+*/
 const changePassword = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const { oldPassword, newPassword } = req.body;
+        const id = req.params.id;
+        const { oldPassword, newPassword, newPasswordConfirm } = req.body;
+
+        if(newPassword != newPasswordConfirm) return res.status(400).json({ message: 'The new password and confirmation do not match' });
+
+        if(!isSafePassword(newPassword)) return res.status(400).json({ message: 'The new password need: minimum 8 characters; at least one lowercase, uppercase, digit and special char (not allowed:($, .))' });
 
         const user = await Users.findById(id);
         if (!user) return res.status(404).json({ message: "User not found" });
 
-        const match = await bcrypt.compare(oldPassword, user.password);
+        const match = await comparePasswords(oldPassword, user.password);
         if (!match) return res.status(401).json({ message: "Incorrect old password" });
 
-        user.password = newPassword;
+        user.password = await hashPassword(newPassword);
         await user.save();
 
-        req.passwordChanged = true;
         next();
     } catch (err) {
         next(err);
@@ -168,9 +219,12 @@ const changePassword = async (req, res, next) => {
 
 const softDeleteUser = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const user = await Users.findByIdAndUpdate(id, { deletedAt: new Date() }, { new: true });
+        const id = req.params.id;
+        const user = await Users.findByIdAndUpdate(id, { deleted: true }, { new: true });
         if (!user) return res.status(404).json({ message: "User not found" });
+
+        // remove password field
+        delete user.password;
 
         req.softDeletedUser = user;
         next();
@@ -179,6 +233,26 @@ const softDeleteUser = async (req, res, next) => {
     }
 };
 
+//? ADMIN ONLY?
+//? how use?
+const restoreUser = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const user = await Users.findByIdAndUpdate(id, { deleted: false }, { new: true });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // remove password field
+        delete user.password;
+
+        req.restoreUser = user;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
+//! ADMIN ONLY
+// TODO resolve dependencies
 const deleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -192,23 +266,11 @@ const deleteUser = async (req, res, next) => {
     }
 };
 
-const getUser = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const user = await Users.findById(id).select("-password");
-        if (!user) return res.status(404).json({ message: "User not found" });
-
-        req.foundUser = user;
-        next();
-    } catch (err) {
-        next(err);
-    }
-};
-
+//! ADMIN ONLY
 const searchUser = async (req, res, next) => {
     try {
         const { email, username } = req.query;
-        const query = { deletedAt: null };
+        const query = { deleted: false };
         if (email) query.email = email;
         if (username) query.username = username;
 
@@ -220,10 +282,11 @@ const searchUser = async (req, res, next) => {
     }
 };
 
-//won't use
+//! ADMIN ONLY
+//probabily won't use
 const getAllUsers = async (req, res, next) => {
     try {
-        const users = await Users.find({}, "-password"); // Exclude password from results
+        const users = await Users.find({ deleted: false }, "-password"); // Exclude password from results
         req.users = users; // Attach to request for later use
         next();
     } catch (err) {
