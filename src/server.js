@@ -42,7 +42,7 @@ if (cluster.isMaster) {
 
     //* v1
     const routerv1 = require("./routes/v1/router")
-    app.use("api/v1/", routerv1);
+    app.use("/api/v1", routerv1);
 
 //* Run
     app.listen(PORT, () => {

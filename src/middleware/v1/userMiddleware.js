@@ -1,5 +1,5 @@
-const Users = require('../../models/User')
-const { hashPassword, comparePasswords, isSafePassword } = require('../../utils/passwordUtils');
+const { Users } = require('../../models/User.js')
+const { hashPassword, comparePasswords, isSafePassword } = require('../../utils/passwordUtils.js');
 
 const authorizeSelf = (req, res, next) => {
     const userId = req.user?.userId; // ID from authenticated user
@@ -44,7 +44,7 @@ const createUser = async (req, res, next) => {
         await user.save();
 
         // remove password field
-        delete user.password;
+        user.password = undefined;
 
         req.createdUser = user;
         next();
@@ -94,7 +94,7 @@ const updateUser = async (req, res, next) => {
         if (!updated) return res.status(404).json({ message: "User not found or no data"});
 
         // remove password field
-        delete updated.password;
+        updated.password = undefined;
 
         req.updatedUser = updated;
         next();
@@ -124,7 +124,7 @@ const patchUser = async (req, res, next) => {
         if (!patched) return res.status(404).json({ message: "User not found or no data"});
 
         // remove password field
-        delete patched.password;
+        patched.password = undefined;
 
         req.patchedUser = patched;
         next();
@@ -171,7 +171,7 @@ const softDeleteUser = async (req, res, next) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         // remove password field
-        delete user.password;
+        user.password = undefined;
 
         req.softDeletedUser = user;
         next();
@@ -189,9 +189,43 @@ const restoreUser = async (req, res, next) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         // remove password field
-        delete user.password;
+        user.password = undefined;
 
         req.restoreUser = user;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
+//! ADMIN ONLY
+/*
+{
+    "username": "johndo",
+    "email": "johndo@example.com",
+    "isAdmin": false,
+    "deleted": false,
+    "limit": 1,
+    "skip": 1
+}
+*/
+const searchUser = async (req, res, next) => {
+    try {
+        const { email, username, isAdmin, deleted, limit, skip} = req.query;
+        const query = { deleted: false };
+        if (email) query.email = email;
+        if (username) query.username = username;
+        if (isAdmin) query.isAdmin = isAdmin;
+        if (deleted) query.deleted = deleted;
+        let limited = 1000;
+        if(limit){
+            if (limit > 1000) limited = limit;
+        }
+        let skiped = 0;
+        if(skip) skiped = skip;
+
+        const users = await Users.find(query).select("-password").limit(limited).skip(skiped);
+        req.foundUsers = users;
         next();
     } catch (err) {
         next(err);
@@ -202,27 +236,14 @@ const restoreUser = async (req, res, next) => {
 // TODO resolve dependencies
 const deleteUser = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id;
         const deleted = await Users.findByIdAndDelete(id);
         if (!deleted) return res.status(404).json({ message: "User not found" });
 
+        // remove password field
+        deleted.password = undefined;
+
         req.deletedUser = deleted;
-        next();
-    } catch (err) {
-        next(err);
-    }
-};
-
-//! ADMIN ONLY
-const searchUser = async (req, res, next) => {
-    try {
-        const { email, username } = req.query;
-        const query = { deleted: false };
-        if (email) query.email = email;
-        if (username) query.username = username;
-
-        const users = await Users.find(query).select("-password");
-        req.foundUsers = users;
         next();
     } catch (err) {
         next(err);

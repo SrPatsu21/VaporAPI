@@ -49,5 +49,5 @@ const Users = mongoose.model("Users", userSchema);
 
 //* Export the model
 module.exports = {
-    Users: Users,
+    Users,
 }
