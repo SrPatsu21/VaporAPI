@@ -1,7 +1,7 @@
 // TODO add loggin middleware
 const express = require('express');
 const {authenticate, isAdmin} = require('./authController.js')
-const {createUser, patchUser, updateUser, changePassword, softDeleteUser, deleteUser, getUser, searchUser, getAllUsers, authorizeSelf} = require('../models/User')
+const {createUser, patchUser, updateUser, changePassword, softDeleteUser, restoreUser, deleteUser, getUser, searchUser, authorizeSelf} = require('../../middleware/v1/User.js')
 
 const router = express.Router();
 
@@ -26,7 +26,7 @@ router.post("/", createUser, async (req, res) => {
 
 //* Get user
 /*
-curl -k -X GET https://localhost/user/68096a0e8e27d34465771f40 \
+curl -k -X GET https://localhost/user/USER_ID \
     -H "Content-Type: application/json"
 */
 router.get("/:id", getUser, async (req, res) => {
@@ -40,7 +40,7 @@ router.get("/:id", getUser, async (req, res) => {
 //* Update user
 //change the id and token!
 /*
-curl -k -X PUT https://localhost/user/68096a0e8e27d34465771f40 \
+curl -k -X PUT https://localhost/user/USER_ID \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer TOKEN_HERE" \
     -d '{
@@ -60,7 +60,7 @@ router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => 
 //* patch user
 //change the id and TOKEN!
 /*
-curl -k -X PATCH https://localhost/user/68096a0e8e27d34465771f40 \
+curl -k -X PATCH https://localhost/user/USER_ID \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer TOKEN_HERE" \
     -d '{
@@ -79,7 +79,7 @@ router.patch("/:id", authenticate, authorizeSelf, patchUser, async (req, res) =>
 //* change password
 //change the id and TOKEN!
 /*
-curl -k -X PATCH https://localhost/user/changepassword/68096a0e8e27d34465771f40 \
+curl -k -X PATCH https://localhost/user/changepassword/USER_ID \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer TOKEN_HERE" \
     -d '{
@@ -99,13 +99,29 @@ router.patch("/changepassword/:id", authenticate, authorizeSelf, changePassword,
 //* soft delete user
 //change the id and TOKEN!
 /*
-curl -k -X DELETE https://localhost/user/68096a0e8e27d34465771f40 \
+curl -k -X DELETE https://localhost/user/USER_ID \
     -H "Authorization: Bearer TOKEN_HERE" \
     -H "Content-Type: application/json"
 */
 router.delete("/:id", authenticate, authorizeSelf, softDeleteUser, async (req, res) => {
     try {
         res.status(201).json("User deactivated: " + req.softDeletedUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//? ADMIN ONLY?
+//? how use?
+//change the id and TOKEN!
+/*
+curl -k -X PATCH https://localhost/user/USER_ID \
+    -H "Authorization: Bearer TOKEN_HERE" \
+    -H "Content-Type: application/json"
+*/
+router.patch("/restoreuser/:id", authenticate, isAdmin, restoreUser, async (req, res) => {
+    try {
+        res.status(201).json("User activated: " + req.restoreUser);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

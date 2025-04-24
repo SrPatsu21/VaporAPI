@@ -1,5 +1,5 @@
-const { Users } = require('../models/User');
-const { comparePasswords } = require('../utils/passwordUtils');
+const { Users } = require('../../models/User');
+const { comparePasswords } = require('../../utils/passwordUtils');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 

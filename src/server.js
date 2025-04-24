@@ -38,13 +38,13 @@ if (cluster.isMaster) {
 
     connectDB();
 
-    //* routes:
-    const userRoute = require("./routes/userRoute");
-    app.use("/user", userRoute);
+//* routes:
 
-    const { login } = require("./routes/authController");
-    app.use("/", login);
+    //* v1
+    const routerv1 = require("./routes/v1/router")
+    app.use("api/v1/", routerv1);
 
+//* Run
     app.listen(PORT, () => {
         console.log(`Worker ${process.pid} running at https://${hostname}:${PORT}`);
     });
