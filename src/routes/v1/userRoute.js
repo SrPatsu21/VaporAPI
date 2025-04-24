@@ -151,7 +151,7 @@ curl -k -X DELETE https://localhost/api/v1/user/USER_ID \
     -H "Authorization: Bearer TOKEN_HERE" \
     -H "Content-Type: application/json"
 */
-router.delete("/:id", authenticate, deleteUser, async (req, res) => {
+router.delete("/:id", authenticate, isAdmin, deleteUser, async (req, res) => {
     try {
         res.status(201).json(req.deletedUser);
     } catch (error) {
