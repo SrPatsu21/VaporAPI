@@ -42,8 +42,8 @@ router.get("/:id", getUser, async (req, res) => {
 //change the id and token!
 /*
 curl -k -X PUT https://localhost/api/v1/user/USER_ID \
-    -H "Content-Type: application/json" \
     -H "Authorization: Bearer TOKEN_HERE" \
+    -H "Content-Type: application/json" \
     -d '{
         "username": "johndo",
         "email": "johndo@example.br"
@@ -62,8 +62,8 @@ router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => 
 //change the id and TOKEN!
 /*
 curl -k -X PATCH https://localhost/api/v1/user/USER_ID \
-    -H "Content-Type: application/json" \
     -H "Authorization: Bearer TOKEN_HERE" \
+    -H "Content-Type: application/json" \
     -d '{
         "username": "johndo",
         "email": "johndo@example.com"
@@ -81,8 +81,8 @@ router.patch("/:id", authenticate, authorizeSelf, patchUser, async (req, res) =>
 //change the id and TOKEN!
 /*
 curl -k -X PATCH https://localhost/api/v1/user/changepassword/USER_ID \
-    -H "Content-Type: application/json" \
     -H "Authorization: Bearer TOKEN_HERE" \
+    -H "Content-Type: application/json" \
     -d '{
         "oldPassword": "Secure_password1",
         "newPassword": "Secure_password2",

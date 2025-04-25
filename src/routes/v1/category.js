@@ -1,73 +1,69 @@
-// TODO add loggin middleware
 const express = require('express');
 const {authenticate, isAdmin} = require('./authController.js')
 const {createCategory, getCategory, updateCategory,
-        deleteCategory } = require('../../middleware/v1/category.js')
+    searchCategory, deleteCategory } = require('../../middleware/v1/category.js')
 
 const router = express.Router();
 
+//! ADMIN ONLY
 //* Create a new category
+//change the token!
 /*
 curl -k -X POST https://localhost/api/v1/category/ \
+    -H "Authorization: Bearer TOKEN_HERE" \
     -H "Content-Type: application/json" \
     -d '{
-        "username": "johndoe",
-        "email": "johndoe@example.com",
-        "password": "Secure_password1",
-        "passwordConfirm": "Secure_password1"
-    }'
+        "categorySTR": "Game",
+    }
 */
-router.post("/", createUser, async (req, res) => {
+router.post("/", createCategory, async (req, res) => {
     try {
-        res.status(201).json(req.createdUser);
+        res.status(201).json(req.createdCategory);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
-//* Get user
+//* Get category
 /*
-curl -k -X GET https://localhost/api/v1/user/USER_ID \
+curl -k -X GET https://localhost/api/v1/category/CATEGORY_ID \
     -H "Content-Type: application/json"
 */
-router.get("/:id", getUser, async (req, res) => {
+router.get("/:id", getCategory, async (req, res) => {
     try {
-        res.status(201).json(req.foundUser);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-//* Update user
-//change the id and token!
-/*
-curl -k -X PUT https://localhost/api/v1/user/USER_ID \
-    -H "Content-Type: application/json" \
-    -H "Authorization: Bearer TOKEN_HERE" \
-    -d '{
-        "username": "johndo",
-        "email": "johndo@example.br"
-    }'
-*/
-router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => {
-    try {
-        res.status(201).json(req.updatedUser);
+        res.status(201).json(req.foundCategory);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 });
 
 //! ADMIN ONLY
-//* search user
-//change the TOKEN!
+//* Update category
+//change the id and token!
 /*
-curl -k -X GET "https://localhost/api/v1/user/?username=johndo&email=johndo@example.com&isAdmin=false&deleted=false&limit=1&skip=1" \
+curl -k -X PUT https://localhost/api/v1/category/CATEGORY_ID \
     -H "Authorization: Bearer TOKEN_HERE" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "categorySTR": "Game",
+    }'
+*/
+router.put("/:id", updateCategory, async (req, res) => {
+    try {
+        res.status(201).json(req.updatedCategory);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//* search category
+/*
+curl -k -X GET "https://localhost/api/v1/category/?categorySTR=Game&limit=1&skip=1" \
     -H "Content-Type: application/json"
 */
-router.get("/", authenticate, isAdmin, searchUser, async (req, res) => {
+router.get("/", searchCategory, async (req, res) => {
     try {
-        res.status(201).json(req.foundUsers);
+        res.status(201).json(req.foundCategories);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -77,11 +73,11 @@ router.get("/", authenticate, isAdmin, searchUser, async (req, res) => {
 //* delete user
 //change the id and TOKEN!
 /*
-curl -k -X DELETE https://localhost/api/v1/user/USER_ID \
+curl -k -X DELETE https://localhost/api/v1/category/CATEGORY_ID \
     -H "Authorization: Bearer TOKEN_HERE" \
     -H "Content-Type: application/json"
 */
-router.delete("/:id", authenticate, isAdmin, deleteUser, async (req, res) => {
+router.delete("/:id", deleteCategory, async (req, res) => {
     try {
         res.status(201).json(req.deletedUser);
     } catch (error) {

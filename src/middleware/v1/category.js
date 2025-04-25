@@ -37,31 +37,6 @@ const getCategory = async (req, res, next) => {
     }
 };
 
-/*
-{
-    "categorySTR": "Game",
-}
-*/
-const searchCategory = async (req, res, next) => {
-    try {
-        const { categorySTR, limit, skip } = req.query;
-        const query = { };
-        if (categorySTR) query.categorySTR = categorySTR;
-        let limited = 100;
-        if(limit){
-            if (limit > 100) limited = limit;
-        }
-        let skiped = 0;
-        if(skip) skiped = skip;
-
-        const categories = await Category.find(query).limit(limited).skip(skiped);
-        req.foundCategories = categories;
-        next();
-    } catch (err) {
-        next(err);
-    }
-};
-
 //! ADMIN ONLY
 /*
 {
@@ -94,6 +69,31 @@ const updateCategory = async (req, res, next) => {
     }
 };
 
+/*
+{
+    "categorySTR": "Game",
+}
+*/
+const searchCategory = async (req, res, next) => {
+    try {
+        const { categorySTR, limit, skip } = req.query;
+        const query = { };
+        if (categorySTR) query.categorySTR = categorySTR;
+        let limited = 100;
+        if(limit){
+            if (limit > 100) limited = limit;
+        }
+        let skiped = 0;
+        if(skip) skiped = skip;
+
+        const categories = await Category.find(query).limit(limited).skip(skiped);
+        req.foundCategories = categories;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
 //! ADMIN ONLY
 const deleteCategory = async (req, res, next) => {
     try {
@@ -112,6 +112,7 @@ const deleteCategory = async (req, res, next) => {
 module.exports = {
     createCategory,
     getCategory,
+    searchCategory,
     updateCategory,
     deleteCategory,
 }
