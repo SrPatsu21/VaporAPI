@@ -1,4 +1,3 @@
-// TODO add loggin middleware
 const express = require('express');
 const {authenticate, isAdmin} = require('./authController.js')
 const {createCategory, getCategory, updateCategory,
