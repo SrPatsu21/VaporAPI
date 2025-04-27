@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/user/:
+ * /api/v1/user:
  *   post:
  *     summary: Create a new user
  *     tags: [User]
@@ -60,7 +60,7 @@ const router = express.Router();
  *       400:
  *         description: Bad request
  */
-router.post("/", createUser, async (req, res) => {
+router.post("", createUser, async (req, res) => {
     try {
         res.status(201).json(req.createdUser);
     } catch (error) {
@@ -368,9 +368,9 @@ router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, asy
 //? how use?
 /**
  * @swagger
- * /api/v1/user/softdelete/{id}:
+ * /api/v1/user/restoreuser/{id}:
  *   patch:
- *     summary: Soft delete (deactivate) a user
+ *     summary: Restore (reactivate) a soft-deleted user
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
@@ -378,12 +378,12 @@ router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, asy
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID of the user to deactivate
+ *         description: ID of the user to restore
  *         schema:
  *           type: string
  *     responses:
  *       201:
- *         description: User deactivated successfully
+ *         description: User restored successfully
  *         content:
  *           application/json:
  *             schema:
@@ -391,7 +391,7 @@ router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, asy
  *               properties:
  *                 message:
  *                   type: string
- *                   example: User deactivated
+ *                   example: User activated successfully
  *                 user:
  *                   type: object
  *                   properties:
@@ -403,6 +403,7 @@ router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, asy
  *                       type: string
  *                     deleted:
  *                       type: boolean
+ *                       example: false
  *                     isAdmin:
  *                       type: boolean
  *                     createdAt:
@@ -416,7 +417,7 @@ router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, asy
  *       401:
  *         description: Unauthorized (Missing or invalid token)
  *       403:
- *         description: Forbidden (Invalid or expired token)
+ *         description: Forbidden (Admins only)
  *       404:
  *         description: User not found
  */
@@ -428,10 +429,9 @@ router.patch("/restoreuser/:id", authenticate, isAdmin, restoreUser, async (req,
     }
 });
 
-//! ADMIN ONLY
 /**
  * @swagger
- * /api/v1/user/:
+ * /api/v1/user:
  *   get:
  *     summary: Search users (Admin only)
  *     tags: [User]
@@ -472,7 +472,7 @@ router.patch("/restoreuser/:id", authenticate, isAdmin, restoreUser, async (req,
  *       400:
  *         description: Bad request
  */
-router.get("/", authenticate, isAdmin, searchUser, async (req, res) => {
+router.get("", authenticate, isAdmin, searchUser, async (req, res) => {
     try {
         res.status(201).json(req.foundUsers);
     } catch (error) {
@@ -480,7 +480,6 @@ router.get("/", authenticate, isAdmin, searchUser, async (req, res) => {
     }
 });
 
-//! ADMIN ONLY
 /**
  * @swagger
  * /api/v1/user/{id}:
@@ -541,7 +540,6 @@ router.delete("/:id", authenticate, isAdmin, deleteUser, async (req, res) => {
     }
 });
 
-//! ADMIN ONLY
 /**
  * @swagger
  * /api/v1/user/admin/{id}:
