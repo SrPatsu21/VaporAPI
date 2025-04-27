@@ -30,6 +30,11 @@ const createUser = async (req, res, next) => {
 
         if(!isSafePassword(password)) return res.status(400).json({ message: 'The new password need: minimum 8 characters; at least one lowercase, uppercase, digit and special char (not allowed:($, .))' });
 
+        // Validate email format
+        const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        if (!emailValidator.test(email)) {
+            return res.status(400).json({ message: `Email (${email}) is not a valid email!` });
+        }
 
         // Hash password
         const hashedPassword = await hashPassword(password);
@@ -85,6 +90,11 @@ const updateUser = async (req, res, next) => {
         const updates = {}
         updates.username = req.body.username;
         updates.email = req.body.email;
+
+        const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        if (!emailValidator.test(email)) {
+            return res.status(400).json({ message: `${email} is not a valid email!` });
+        }
 
         const updated = await Users.findByIdAndUpdate(
             id,
@@ -250,6 +260,24 @@ const deleteUser = async (req, res, next) => {
     }
 };
 
+const adminControler = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const isAdmin = req.body;
+        if (typeof isAdmin !== 'boolean') return res.status(400).json({ message: "isAdmin must be a boolean" });
+        const user = await Users.findByIdAndUpdate(id, { isAdmin: isAdmin }, { new: true });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // remove password field
+        user.password = undefined;
+
+        req.patched = user;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
 //* Export the model
 module.exports = {
     createUser,
@@ -262,4 +290,5 @@ module.exports = {
     getUser,
     searchUser,
     authorizeSelf,
+    adminControler,
 }

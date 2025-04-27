@@ -35,14 +35,12 @@ const WINDOW_MS = 5 * 60 * 1000; // 5 minutes
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   token:
- *                     type: string
- *                   refreshToken:
- *                     type: string
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 refreshToken:
+ *                   type: string
  *       401:
  *         description: Invalid username or password
  *       429:
@@ -91,7 +89,7 @@ const login = async (req, res) => {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN,
         });
 
-        res.status(200).json([{"token": token }, {"refreshToken": refreshToken}]);
+        res.status(200).json({"token": token, "refreshToken": refreshToken});
     } catch (err) {
         res.status(500).json({ message: "Login failed", error: err.message });
     }
@@ -147,7 +145,7 @@ const refreshToken = (req, res) => {
             username: decoded.username,
             isAdmin: decoded.isAdmin
         }, process.env.JWT_SECRET, {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || "1h",
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN,
         });
 
         res.status(200).json({ token: newAccessToken });

@@ -48,6 +48,10 @@ if (cluster.isMaster) {
     const swaggerDocs = require('./utils/swagger');
     swaggerDocs(app);
 
+    //* debug
+    const seeder = require("./routes/debug/seeder");
+    app.use("/api/debug", seeder);
+
 //* Run
     app.listen(PORT, () => {
         console.log(`Worker ${process.pid} running at https://${hostname}:${PORT}`);

@@ -2,7 +2,7 @@ const express = require('express');
 const {authenticate, isAdmin} = require('./authController.js')
 const {createUser, patchUser, updateUser, changePassword,
         softDeleteUser, restoreUser, deleteUser, getUser,
-        searchUser, authorizeSelf} = require('../../middleware/v1/user.js')
+        searchUser, authorizeSelf, adminControler} = require('../../middleware/v1/user.js')
 
 const router = express.Router();
 
@@ -36,6 +36,27 @@ const router = express.Router();
  *     responses:
  *       201:
  *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 deleted:
+ *                   type: boolean
+ *                 isAdmin:
+ *                   type: boolean
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       400:
  *         description: Bad request
  */
@@ -63,7 +84,30 @@ router.post("/", createUser, async (req, res) => {
  *     responses:
  *       201:
  *         description: User found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 deleted:
+ *                   type: boolean
+ *                 isAdmin:
+ *                   type: boolean
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       400:
+ *         description: User not found
+ *       404:
  *         description: User not found
  */
 router.get("/:id", getUser, async (req, res) => {
@@ -104,8 +148,33 @@ router.get("/:id", getUser, async (req, res) => {
  *     responses:
  *       201:
  *         description: User updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 deleted:
+ *                   type: boolean
+ *                 isAdmin:
+ *                   type: boolean
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized (Missing or invalid token)
+ *       403:
+ *         description: Forbidden (Invalid or expired token)
  */
 router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => {
     try {
@@ -145,10 +214,35 @@ router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => 
  *     responses:
  *       201:
  *         description: User partially updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 deleted:
+ *                   type: boolean
+ *                 isAdmin:
+ *                   type: boolean
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized (Missing or invalid token)
+ *       403:
+ *         description: Forbidden (Invalid or expired token)
  */
-router.patch("/:id", authenticate, authorizeSelf, patchUser, async (req, res) => {
+router.patch("profile/:id", authenticate, authorizeSelf, patchUser, async (req, res) => {
     try {
         res.status(201).json(req.patchedUser);
     } catch (error) {
@@ -172,7 +266,7 @@ router.patch("/:id", authenticate, authorizeSelf, patchUser, async (req, res) =>
  *           type: string
  *         description: User ID
  *     requestBody:
- *       description: Password data
+ *       description: Password change data
  *       required: true
  *       content:
  *         application/json:
@@ -185,19 +279,26 @@ router.patch("/:id", authenticate, authorizeSelf, patchUser, async (req, res) =>
  *             properties:
  *               oldPassword:
  *                 type: string
+ *                 description: Current password of the user
  *               newPassword:
  *                 type: string
+ *                 description: New password to set
  *               newPasswordConfirm:
  *                 type: string
+ *                 description: Confirmation of the new password
  *     responses:
  *       201:
  *         description: Password changed successfully
  *       400:
- *         description: Bad request
+ *         description: Bad request (Validation failed)
+ *       401:
+ *         description: Unauthorized (Old password incorrect)
+ *       404:
+ *         description: User not found
  */
 router.patch("/changepassword/:id", authenticate, authorizeSelf, changePassword, async (req, res) => {
     try {
-        res.status(201).json("Password changed");
+        res.status(201).json({message: "Password changed"});
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -221,8 +322,39 @@ router.patch("/changepassword/:id", authenticate, authorizeSelf, changePassword,
  *     responses:
  *       201:
  *         description: User deactivated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deactivated
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     deleted:
+ *                       type: boolean
+ *                     isAdmin:
+ *                       type: boolean
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized (Missing or invalid token)
+ *       403:
+ *         description: Forbidden (Invalid or expired token)
  */
 router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, async (req, res) => {
     try {
@@ -236,9 +368,9 @@ router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, asy
 //? how use?
 /**
  * @swagger
- * /api/v1/user/restoreuser/{id}:
+ * /api/v1/user/softdelete/{id}:
  *   patch:
- *     summary: Restore a soft-deleted user (Admin only)
+ *     summary: Soft delete (deactivate) a user
  *     tags: [User]
  *     security:
  *       - bearerAuth: []
@@ -246,14 +378,47 @@ router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, asy
  *       - in: path
  *         name: id
  *         required: true
+ *         description: ID of the user to deactivate
  *         schema:
  *           type: string
- *         description: User ID
  *     responses:
  *       201:
- *         description: User restored
+ *         description: User deactivated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deactivated
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     deleted:
+ *                       type: boolean
+ *                     isAdmin:
+ *                       type: boolean
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
  *       400:
  *         description: Bad request
+ *       401:
+ *         description: Unauthorized (Missing or invalid token)
+ *       403:
+ *         description: Forbidden (Invalid or expired token)
+ *       404:
+ *         description: User not found
  */
 router.patch("/restoreuser/:id", authenticate, isAdmin, restoreUser, async (req, res) => {
     try {
@@ -300,6 +465,10 @@ router.patch("/restoreuser/:id", authenticate, isAdmin, restoreUser, async (req,
  *     responses:
  *       201:
  *         description: List of users
+ *       401:
+ *         description: Unauthorized (Missing or invalid token)
+ *       403:
+ *         description: Forbidden (Invalid or expired token)
  *       400:
  *         description: Bad request
  */
@@ -330,12 +499,119 @@ router.get("/", authenticate, isAdmin, searchUser, async (req, res) => {
  *     responses:
  *       201:
  *         description: User deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deactivated
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     deleted:
+ *                       type: boolean
+ *                     isAdmin:
+ *                       type: boolean
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       401:
+ *         description: Unauthorized (Missing or invalid token)
+ *       403:
+ *         description: Forbidden (Invalid or expired token)
  *       400:
  *         description: Bad request
  */
 router.delete("/:id", authenticate, isAdmin, deleteUser, async (req, res) => {
     try {
         res.status(201).json(req.deletedUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+//! ADMIN ONLY
+/**
+ * @swagger
+ * /api/v1/user/admin/{id}:
+ *   patch:
+ *     summary: Set user as admin or not (Admin only)
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID
+ *     requestBody:
+ *       description: Admin status data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - isAdmin
+ *             properties:
+ *               isAdmin:
+ *                 type: boolean
+ *                 description: Set to true to make user admin, false to revoke
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: User deactivated
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     deleted:
+ *                       type: boolean
+ *                     isAdmin:
+ *                       type: boolean
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Bad request (Invalid input)
+ *       401:
+ *         description: Unauthorized (Missing or invalid token)
+ *       403:
+ *         description: Forbidden (Invalid or expired token)
+ *       404:
+ *         description: User not found
+ */
+router.patch("/admin/:id", authenticate, isAdmin, adminControler, async (req, res) => {
+    try {
+        res.status(201).json(req.patched);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
