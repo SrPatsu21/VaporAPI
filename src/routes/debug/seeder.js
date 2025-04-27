@@ -8,8 +8,6 @@ const { clearCollections, createAdminUser } = require("../../utils/seeder");
  *   post:
  *     summary: Clear all data from collections (preserves collections and configurations)
  *     tags: [debug]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully cleared data from all collections
@@ -67,8 +65,6 @@ router.post("/clear-collections", async (req, res) => {
  *   post:
  *     summary: Create the admin user if not already present
  *     tags: [debug]
- *     security:
- *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully created the admin user
@@ -80,16 +76,6 @@ router.post("/clear-collections", async (req, res) => {
  *                 message:
  *                   type: string
  *                   example: Admin user created successfully!
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Error creating admin user
  *       401:
  *         description: Unauthorized (invalid or missing token)
  *         content:
@@ -110,13 +96,23 @@ router.post("/clear-collections", async (req, res) => {
  *                 message:
  *                   type: string
  *                   example: Invalid or expired token
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error creating admin user
  */
 router.post("/create-admin", async (req, res) => {
     try {
         await createAdminUser();
-        res.status(200).json({ message: "Admin user created successfully!" });
+        res.status(200).json({ message: "Admin and user created successfully!" });
     } catch (err) {
-        res.status(500).json({ message: "Error creating admin user", error: err.message });
+        res.status(500).json({ message: "Error creating admin and user", error: err.message });
     }
 });
 

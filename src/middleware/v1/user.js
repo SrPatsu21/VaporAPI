@@ -86,15 +86,15 @@ const updateUser = async (req, res, next) => {
             });
         }
 
+        const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+        if (!emailValidator.test(req.body.email)) {
+            return res.status(400).json({ message: `${req.body.email} is not a valid email!` });
+        }
+
         const id = req.params.id;
         const updates = {}
         updates.username = req.body.username;
         updates.email = req.body.email;
-
-        const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-        if (!emailValidator.test(email)) {
-            return res.status(400).json({ message: `${email} is not a valid email!` });
-        }
 
         const updated = await Users.findByIdAndUpdate(
             id,
@@ -125,6 +125,14 @@ const patchUser = async (req, res, next) => {
         const updates = {}
         updates.username = req.body.username;
         updates.email = req.body.email;
+
+        if (updates.email){
+            const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+            if (!emailValidator.test(updates.email)) {
+                return res.status(400).json({ message: `${updates.email} is not a valid email!` });
+            }
+        }
+
 
         const patched = await Users.findByIdAndUpdate(
             id,
@@ -263,8 +271,8 @@ const deleteUser = async (req, res, next) => {
 const adminControler = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const isAdmin = req.body;
-        if (typeof isAdmin !== 'boolean') return res.status(400).json({ message: "isAdmin must be a boolean" });
+        const isAdmin = req.body.isAdmin;
+        if (typeof isAdmin !== 'boolean') return res.status(400).json({ message: `isAdmin (${isAdmin}) must be a boolean` });
         const user = await Users.findByIdAndUpdate(id, { isAdmin: isAdmin }, { new: true });
         if (!user) return res.status(404).json({ message: "User not found" });
 

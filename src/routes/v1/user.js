@@ -187,7 +187,7 @@ router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => 
 
 /**
  * @swagger
- * /api/v1/user/{id}:
+ * /api/v1/user/profile/{id}:
  *   patch:
  *     summary: Update user partially
  *     tags: [User]
@@ -242,7 +242,7 @@ router.put("/:id", authenticate, authorizeSelf, updateUser, async (req, res) => 
  *       403:
  *         description: Forbidden (Invalid or expired token)
  */
-router.patch("profile/:id", authenticate, authorizeSelf, patchUser, async (req, res) => {
+router.patch("/profile/:id", authenticate, authorizeSelf, patchUser, async (req, res) => {
     try {
         res.status(201).json(req.patchedUser);
     } catch (error) {
@@ -358,7 +358,7 @@ router.patch("/changepassword/:id", authenticate, authorizeSelf, changePassword,
  */
 router.patch("/softdelete/:id", authenticate, authorizeSelf, softDeleteUser, async (req, res) => {
     try {
-        res.status(201).json("User deactivated: " + req.softDeletedUser);
+        res.status(201).json("User deactivated while you have this token you can still acess: " + req.softDeletedUser);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }

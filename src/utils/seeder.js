@@ -6,19 +6,30 @@ require("dotenv").config();
 const createAdminUser = async () => {
     const adminExists = await Users.findOne({ username: "admin" });
     if (adminExists) {
-        console.log("Admin user already exists!");
+        console.log("admin already exists!");
+        return;
+    }
+    const user1Exists = await Users.findOne({ username: "user1" });
+    if (user1Exists) {
+        console.log("user1 already exists!");
         return;
     }
 
     const adminUser = new Users({
         username: "admin",
         email: "admin@example.com",
-        password: hashPassword("@Dmin123"),
+        password: await hashPassword("@Admin123"),
         isAdmin: true,
+    });
+    const normalUser = new Users({
+        username: "user1",
+        email: "user1@example.com",
+        password: await hashPassword("@User123"),
     });
 
     await adminUser.save();
-    console.log("Admin user created!");
+    await normalUser.save();
+    console.log("Admin and user created!");
 };
 
 const clearCollections = async () => {

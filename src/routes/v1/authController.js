@@ -66,7 +66,7 @@ const login = async (req, res) => {
     }
     const { username, password } = req.body;
     try {
-        const user = await Users.findOne({ username });
+        const user = await Users.findOne({ username: username, deleted: false });
 
         // TODO verify if is a mistake, becase it will find user first and u will know what is wrong
         if (!user) return res.status(401).json({ message: "Invalid user name or password" });
@@ -171,10 +171,16 @@ const authenticate = (req, res, next) => {
     }
 };
 
-const isAdmin = (req, res, next) => {
+const isAdmin = async (req, res, next) => {
     if (!req.user || !req.user.isAdmin) {
         return res.status(403).json({ message: "Access denied: Admins only" });
     }
+    //*db validation
+    const user = await Users.findById(req.user.userId)
+    if (!user.isAdmin) {
+        return res.status(403).json({ message: "Access denied: Admins only" });
+    }
+    console.log(user.isAdmin)
     next();
 };
 
