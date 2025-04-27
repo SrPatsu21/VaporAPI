@@ -44,6 +44,14 @@ if (cluster.isMaster) {
     const routerv1 = require("./routes/v1/router")
     app.use("/api/v1", routerv1);
 
+    //* docs
+    const swaggerDocs = require('./utils/swagger');
+    swaggerDocs(app);
+
+    //* debug
+    const seeder = require("./routes/debug/seeder");
+    app.use("/api/debug", seeder);
+
 //* Run
     app.listen(PORT, () => {
         console.log(`Worker ${process.pid} running at https://${hostname}:${PORT}`);

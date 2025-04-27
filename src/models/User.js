@@ -23,12 +23,6 @@ const userSchema = new Schema(
             type: "string",
             required: true,
             trim: true,
-            validate: {
-                validator: function (v) {
-                    return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v);
-                },
-                message: (props) => `${props.value} is not a valid email!`,
-            },
             description: "must be a valid email and is required",
         },
         deleted: {
