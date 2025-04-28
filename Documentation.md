@@ -71,7 +71,7 @@ db.createUser({
   user: "api_user",
   pwd: "strong_password",
   roles: [{ role: "readWrite", db: "VaporBase" }]
-})
+});
 ```
 Enable sharding
 ```shell

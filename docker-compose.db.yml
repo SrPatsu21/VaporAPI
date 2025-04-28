@@ -114,8 +114,6 @@ services:
     build:
       context: mongos
     command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
-    volumes:
-      - mongos-router0-data:/data/db
     depends_on:
       - shard0-replica0
       - shard0-replica1
@@ -127,9 +125,9 @@ services:
       internalnetwork:
           aliases:
             - mongos-router0
-      bridg2mongo:
+      bridge2mongo:
     environment:
-      - SHARD_LIST=shard0/shard0-replica0:27017,shard0-replica0:27017,shard0-replica0:27017;shard1/shard1-replica0:27017,shard1-replica0:27017,shard1-replica0:27017
+      - SHARD_LIST=shard0/shard0-replica0:27017,shard0-replica1:27017;shard1/shard1-replica0:27017,shard1-replica1:27017,
     expose:
       - "27017"
     ports:
@@ -141,13 +139,11 @@ services:
   #   build:
   #     context: mongos
   #   command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
-  #   volumes:
-  #     - mongos-router1-data:/data/db
   #   networks:
   #     internalnetwork:
   #         aliases:
   #           - mongos-router1
-  #     bridg2mongo:
+  #     bridge2mongo:
   #   expose:
   #     - "27017"
   #   ports:
@@ -155,7 +151,7 @@ services:
 
 networks:
   internalnetwork: {}
-  bridg2mongo:
+  bridge2mongo:
     driver: bridge
 
 volumes:
@@ -165,5 +161,3 @@ volumes:
   shard0-data-replica1:
   shard1-data-replica0:
   shard1-data-replica1:
-  mongos-router0-data:
-  mongos-router1-data:

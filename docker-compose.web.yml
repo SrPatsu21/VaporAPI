@@ -28,7 +28,7 @@ services:
     # logging:
     #   driver: "none"
     networks:
-      bridg2mongo:
+      bridge2mongo:
       brid2nginx:
 
 #API 2
@@ -58,7 +58,7 @@ services:
     # logging:
     #   driver: "none"
     networks:
-      bridg2mongo:
+      bridge2mongo:
       brid2nginx:
 
 #API 3
@@ -89,7 +89,7 @@ services:
     #   driver: "none"
     networks:
       brid2nginx:
-      bridg2mongo:
+      bridge2mongo:
 
 #Backup api
   backup_api:
@@ -154,7 +154,7 @@ services:
       brid2nginx:
 
 networks:
-  bridg2mongo:
+  bridge2mongo:
     driver: bridge
   brid2nginx:
     driver: bridge
