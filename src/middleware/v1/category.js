@@ -10,7 +10,6 @@ const createCategory = async (req, res, next) => {
     try {
         const { categorySTR } = req.body;
 
-        // Create user with hashed password
         const category = new Categories({
             categorySTR
         });
@@ -53,14 +52,15 @@ const updateCategory = async (req, res, next) => {
 
         const id = req.params.id;
 
-        const updates = req.body.categorySTR;
+        const updates = {}
+        updates.categorySTR = req.body.categorySTR;
 
         const updated = await Categories.findByIdAndUpdate(
             id,
             updates,
             { new: true }
         );
-        if (!updated) return res.status(404).json({ message: "Category not found or no data"});
+        if (!updated) return res.status(404).json({ message: "Category not found"});
 
         req.updatedCategory = updated;
         next();
@@ -99,9 +99,9 @@ const deleteCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
         const deleted = await Categories.findByIdAndDelete(id);
-        if (!deleted) return res.status(404).json({ message: "User not found" });
+        if (!deleted) return res.status(404).json({ message: "Category not found" });
 
-        req.deletedUser = deleted;
+        req.deletedCategory = deleted;
         next();
     } catch (err) {
         next(err);

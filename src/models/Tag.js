@@ -17,7 +17,7 @@ const tagSchema  = new Schema(
             description: "must be a string and is required",
         },
     },
-    { collection: "Tags" },
+    { collection: "Tags", timestamps: true },
 );
 
 const Tags = mongoose.model('Tags', tagSchema);

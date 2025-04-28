@@ -180,7 +180,6 @@ const isAdmin = async (req, res, next) => {
     if (!user.isAdmin) {
         return res.status(403).json({ message: "Access denied: Admins only" });
     }
-    console.log(user.isAdmin)
     next();
 };
 

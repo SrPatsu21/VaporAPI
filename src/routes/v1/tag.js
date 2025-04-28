@@ -1,16 +1,16 @@
 const express = require('express');
 const {authenticate, isAdmin} = require('./authController.js')
-const {createCategory, getCategory, updateCategory,
-    searchCategory, deleteCategory } = require('../../middleware/v1/category.js')
+const { createTag, getTag, searchTag,
+    updateTag, deleteTag } = require('../../middleware/v1/tag.js')
 
 const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/category:
+ * /api/v1/tag:
  *   post:
- *     summary: Create a new category
- *     tags: [Category]
+ *     summary: Create a new tag
+ *     tags: [Tag]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -20,13 +20,13 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - categorySTR
+ *               - tagSTR
  *             properties:
- *               categorySTR:
+ *               tagSTR:
  *                 type: string
  *     responses:
  *       201:
- *         description: Category created
+ *         description: Tag successfully created
  *         content:
  *           application/json:
  *             schema:
@@ -34,7 +34,7 @@ const router = express.Router();
  *               properties:
  *                 _id:
  *                   type: string
- *                 categorySTR:
+ *                 tagSTR:
  *                   type: string
  *                 createdAt:
  *                   type: string
@@ -47,13 +47,15 @@ const router = express.Router();
  *       400:
  *         description: Bad request
  *       401:
- *         description: Unauthorized (Missing or invalid token)
+ *         description: Missing or invalid token
  *       403:
- *         description: Forbidden (Admins only)
+ *         description: Access denied, Admins only
+ *       500:
+ *         description: Server error
  */
-router.post("", authenticate, isAdmin, createCategory, async (req, res) => {
+router.post("", authenticate, isAdmin, createTag, async (req, res) => {
     try {
-        res.status(201).json(req.createdCategory);
+        res.status(201).json(req.createdTag);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -61,20 +63,20 @@ router.post("", authenticate, isAdmin, createCategory, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/category/{id}:
+ * /api/v1/tag/{id}:
  *   get:
- *     summary: Get a category by ID
- *     tags: [Category]
+ *     summary: Get a tag by ID
+ *     tags: [Tag]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID of the category to retrieve
  *         schema:
  *           type: string
+ *         description: Tag ID
  *     responses:
- *       201:
- *         description: Category found
+ *       200:
+ *         description: Tag found
  *         content:
  *           application/json:
  *             schema:
@@ -82,7 +84,7 @@ router.post("", authenticate, isAdmin, createCategory, async (req, res) => {
  *               properties:
  *                 _id:
  *                   type: string
- *                 categorySTR:
+ *                 tagSTR:
  *                   type: string
  *                 createdAt:
  *                   type: string
@@ -92,14 +94,14 @@ router.post("", authenticate, isAdmin, createCategory, async (req, res) => {
  *                   format: date-time
  *                 __v:
  *                   type: number
- *       400:
- *         description: Bad request
  *       404:
- *         description: Category not found
+ *         description: Tag not found
+ *       500:
+ *         description: Server error
  */
-router.get("/:id", getCategory, async (req, res) => {
+router.get("/:id", getTag, async (req, res) => {
     try {
-        res.status(201).json(req.foundCategory);
+        res.status(201).json(req.foundTag);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -107,19 +109,19 @@ router.get("/:id", getCategory, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/category/{id}:
+ * /api/v1/tag/{id}:
  *   put:
- *     summary: Update a category
- *     tags: [Category]
+ *     summary: Update an existing tag
+ *     tags: [Tag]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID of the category to update
  *         schema:
  *           type: string
+ *         description: Tag ID
  *     requestBody:
  *       required: true
  *       content:
@@ -127,13 +129,13 @@ router.get("/:id", getCategory, async (req, res) => {
  *           schema:
  *             type: object
  *             required:
- *               - categorySTR
+ *               - tagSTR
  *             properties:
- *               categorySTR:
+ *               tagSTR:
  *                 type: string
  *     responses:
- *       201:
- *         description: Category updated
+ *       200:
+ *         description: Tag successfully updated
  *         content:
  *           application/json:
  *             schema:
@@ -141,7 +143,7 @@ router.get("/:id", getCategory, async (req, res) => {
  *               properties:
  *                 _id:
  *                   type: string
- *                 categorySTR:
+ *                 tagSTR:
  *                   type: string
  *                 createdAt:
  *                   type: string
@@ -152,17 +154,20 @@ router.get("/:id", getCategory, async (req, res) => {
  *                 __v:
  *                   type: number
  *       400:
- *         description: Bad request
+ *         description: tagSTR is required
  *       401:
- *         description: Unauthorized (Missing or invalid token)
+ *         description: Missing or invalid token
  *       403:
- *         description: Forbidden (Admins only)
+ *         description: Access denied, Admins only
  *       404:
- *         description: Category not found
+ *         description: Tag not found
+ *       500:
+ *         description: Server error
  */
-router.put("/:id", authenticate, isAdmin, updateCategory, async (req, res) => {
+
+router.put("/:id", authenticate, isAdmin, updateTag, async (req, res) => {
     try {
-        res.status(201).json(req.updatedCategory);
+        res.status(201).json(req.updatedTag);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -170,32 +175,29 @@ router.put("/:id", authenticate, isAdmin, updateCategory, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/category:
+ * /api/v1/tag:
  *   get:
- *     summary: Search categories
- *     tags: [Category]
+ *     summary: Search for tags
+ *     tags: [Tag]
  *     parameters:
  *       - in: query
- *         name: categorySTR
- *         required: false
- *         description: Filter by category string
+ *         name: tagSTR
  *         schema:
  *           type: string
+ *         description: Filter by tag string
  *       - in: query
  *         name: limit
- *         required: false
- *         description: Limit number of results (default 100, max 100)
  *         schema:
  *           type: integer
+ *         description: Limit number of results
  *       - in: query
  *         name: skip
- *         required: false
- *         description: Number of results to skip
  *         schema:
  *           type: integer
+ *         description: Number of results to skip
  *     responses:
- *       201:
- *         description: Categories found
+ *       200:
+ *         description: List of tags
  *         content:
  *           application/json:
  *             schema:
@@ -205,14 +207,14 @@ router.put("/:id", authenticate, isAdmin, updateCategory, async (req, res) => {
  *                 properties:
  *                   _id:
  *                     type: string
- *                   categorySTR:
+ *                   tagSTR:
  *                     type: string
- *       400:
- *         description: Bad request
+ *       500:
+ *         description: Server error
  */
-router.get("", searchCategory, async (req, res) => {
+router.get("", searchTag, async (req, res) => {
     try {
-        res.status(201).json(req.foundCategories);
+        res.status(201).json(req.foundTags);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -220,22 +222,22 @@ router.get("", searchCategory, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/category/{id}:
+ * /api/v1/tag/{id}:
  *   delete:
- *     summary: Delete a category
- *     tags: [Category]
+ *     summary: Delete a tag
+ *     tags: [Tag]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID of the category to delete
  *         schema:
  *           type: string
+ *         description: Tag ID
  *     responses:
- *       201:
- *         description: Category deleted
+ *       200:
+ *         description: Tag successfully deleted
  *         content:
  *           application/json:
  *             schema:
@@ -243,7 +245,7 @@ router.get("", searchCategory, async (req, res) => {
  *               properties:
  *                 _id:
  *                   type: string
- *                 categorySTR:
+ *                 tagSTR:
  *                   type: string
  *                 createdAt:
  *                   type: string
@@ -253,18 +255,18 @@ router.get("", searchCategory, async (req, res) => {
  *                   format: date-time
  *                 __v:
  *                   type: number
- *       400:
- *         description: Bad request
  *       401:
- *         description: Unauthorized (Missing or invalid token)
+ *         description: Missing or invalid token
  *       403:
- *         description: Forbidden (Admins only)
+ *         description: Access denied, Admins only
  *       404:
- *         description: Category not found
+ *         description: Tag not found
+ *       500:
+ *         description: Server error
  */
-router.delete("/:id", authenticate, isAdmin, deleteCategory, async (req, res) => {
+router.delete("/:id", authenticate, isAdmin, deleteTag, async (req, res) => {
     try {
-        res.status(201).json(req.deletedCategory);
+        res.status(201).json(req.deletedTag);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
