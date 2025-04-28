@@ -61,7 +61,7 @@ const createUser = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const id = req.params.id;
         const user = await Users.findById(id).select("-password");
         if (!user) return res.status(404).json({ message: "User not found" });
 

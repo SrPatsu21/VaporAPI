@@ -24,7 +24,6 @@ const router = express.Router();
  *             properties:
  *               categorySTR:
  *                 type: string
- *                 example: Game
  *     responses:
  *       201:
  *         description: Category created
@@ -43,6 +42,8 @@ const router = express.Router();
  *                 updatedAt:
  *                   type: string
  *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  *       401:
@@ -89,6 +90,8 @@ router.post("", authenticate, isAdmin, createCategory, async (req, res) => {
  *                 updatedAt:
  *                   type: string
  *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  *       404:
@@ -128,7 +131,6 @@ router.get("/:id", getCategory, async (req, res) => {
  *             properties:
  *               categorySTR:
  *                 type: string
- *                 example: Updated Game
  *     responses:
  *       201:
  *         description: Category updated
@@ -147,6 +149,8 @@ router.get("/:id", getCategory, async (req, res) => {
  *                 updatedAt:
  *                   type: string
  *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  *       401:
@@ -203,12 +207,6 @@ router.put("/:id", authenticate, isAdmin, updateCategory, async (req, res) => {
  *                     type: string
  *                   categorySTR:
  *                     type: string
- *                   createdAt:
- *                     type: string
- *                     format: date-time
- *                   updatedAt:
- *                     type: string
- *                     format: date-time
  *       400:
  *         description: Bad request
  */
@@ -243,11 +241,18 @@ router.get("", searchCategory, async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   type: string
- *                   example: Category deleted
  *                 _id:
  *                   type: string
+ *                 categorySTR:
+ *                   type: string
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  *       401:

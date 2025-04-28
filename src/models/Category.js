@@ -17,7 +17,7 @@ const categorySchema = new Schema(
             description: "must be a string and is required",
         },
     },
-    {collection: "Categories"}
+    {collection: "Categories", timestamps: true}
 );
 
 const Categories = mongoose.model('Categories', categorySchema);

@@ -8,4 +8,7 @@ const { login, refreshToken } = require("./authController");
 router.use("/login", login);
 router.use("/refreshToken", refreshToken)
 
+const categoryRoute = require("./category")
+router.use("/category", categoryRoute)
+
 module.exports = router

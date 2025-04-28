@@ -1,4 +1,4 @@
-const { Category } = require('../../models/Category.js')
+const { Categories } = require('../../models/Category.js')
 
 //! ADMIN ONLY
 /*
@@ -11,7 +11,7 @@ const createCategory = async (req, res, next) => {
         const { categorySTR } = req.body;
 
         // Create user with hashed password
-        const category = new Category({
+        const category = new Categories({
             categorySTR
         });
 
@@ -26,8 +26,8 @@ const createCategory = async (req, res, next) => {
 
 const getCategory = async (req, res, next) => {
     try {
-        const id = req.params;
-        const category = await Category.findById(id);
+        const id = req.params.id;
+        const category = await Categories.findById(id)
         if (!category) return res.status(404).json({ message: "Category not found" });
 
         req.foundCategory = category;
@@ -55,7 +55,7 @@ const updateCategory = async (req, res, next) => {
 
         const updates = req.body.categorySTR;
 
-        const updated = await Users.findByIdAndUpdate(
+        const updated = await Categories.findByIdAndUpdate(
             id,
             updates,
             { new: true }
@@ -86,7 +86,7 @@ const searchCategory = async (req, res, next) => {
         let skiped = 0;
         if(skip) skiped = skip;
 
-        const categories = await Category.find(query).limit(limited).skip(skiped);
+        const categories = await Categories.find(query).limit(limited).skip(skiped).select("-createdAt -updatedAt -__v");
         req.foundCategories = categories;
         next();
     } catch (err) {
@@ -98,7 +98,7 @@ const searchCategory = async (req, res, next) => {
 const deleteCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const deleted = await Category.findByIdAndDelete(id);
+        const deleted = await Categories.findByIdAndDelete(id);
         if (!deleted) return res.status(404).json({ message: "User not found" });
 
         req.deletedUser = deleted;
