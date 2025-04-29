@@ -172,6 +172,13 @@ services:
         networks:
             - mongo-cluster
         restart: "no"
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
 networks:
     mongo-cluster:

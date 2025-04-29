@@ -12,13 +12,14 @@ const categorySchema = new Schema(
             type: "string",
             required: true,
             trim: true,
-            unique: true,
             maxlength: 256,
             description: "must be a string and is required",
         },
     },
     {collection: "Categories", timestamps: true}
 );
+
+categorySchema.index({ _id: "hashed" });
 
 const Categories = mongoose.model('Categories', categorySchema);
 

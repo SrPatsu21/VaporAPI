@@ -12,12 +12,11 @@ const titleSchema = new Schema(
             type: Schema.Types.ObjectId,
             auto: true,
             description: "must be an ObjectId and is required",
-        }, //Shard Key
+        },
         titleSTR: {
             type: "string",
             required: true,
             trim: true,
-            unique: true,
             maxlength: 256,
             description: "must be a string and is required",
         },
@@ -32,6 +31,8 @@ const titleSchema = new Schema(
     },
     { collection: "Titles", timestamps: true },
 );
+
+titleSchema.index({ _id: "hashed" });
 
 const Titles = mongoose.model('Titles', titleSchema);
 

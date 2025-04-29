@@ -6,14 +6,20 @@ USER="${DB_USER}"
 PASS="${DB_PASS}"
 CONFIG="${SHARD_CONFIG}"
 
-sleep 5
-
 # Wait until MongoDB is available
 until mongosh --host configdb-replica0:27017 --quiet --eval 'db.adminCommand({ ping: 1 })' &>/dev/null; do
     echo "Waiting for MongoDB to start..."
     sleep 2
 done
 echo "MongoDB is available!"
+
+# if already config
+USER_EXISTS=$(mongosh --host mongos-router0:27017 --quiet --eval "db.getSiblingDB('${DB}').getUser('${USER}') !== null")
+
+if [ "$USER_EXISTS" = "true" ]; then
+    echo "User already exist. ending..."
+    exit 0
+fi
 
 # 1. Create user only if it does not exist
 echo "Checking if user ${USER} exists..."

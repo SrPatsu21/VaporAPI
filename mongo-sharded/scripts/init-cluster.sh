@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -eux
 
+# Global check: Skip if cluster is already initialized
+if mongosh --quiet --host mongos-router0:27017 --eval 'sh.status().shards.length' | grep -q '[1-9]'; then
+  echo "Cluster already initialized. Exiting..."
+  exit 0
+fi
+
 function initiate_replica_set() {
     local host="$1"
     local config="$2"

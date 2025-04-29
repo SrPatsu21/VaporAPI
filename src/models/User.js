@@ -12,7 +12,6 @@ const userSchema = new Schema(
             type: String,
             trim: true,
             required: true,
-            unique: true,
         },
         password: {
             type: String,
@@ -38,6 +37,8 @@ const userSchema = new Schema(
     },
     { timestamps: true, collection: "Users" },
 );
+
+userSchema.index({ _id: "hashed" });
 
 const Users = mongoose.model("Users", userSchema);
 

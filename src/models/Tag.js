@@ -12,13 +12,14 @@ const tagSchema  = new Schema(
             type: "string",
             required: true,
             trim: true,
-            unique: true,
             maxlength: 48,
             description: "must be a string and is required",
         },
     },
     { collection: "Tags", timestamps: true },
 );
+
+tagSchema.index({ _id: "hashed" });
 
 const Tags = mongoose.model('Tags', tagSchema);
 
