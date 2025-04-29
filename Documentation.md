@@ -16,6 +16,7 @@ In the first run, you will need to run the chmod.
 ```bash
 chmod +x ./startdocker.sh
 chmod +x ./stopdocker.sh
+chmod +x ./startinitdocker.sh
 ```
 
 ##### Now you can run both of the scripts

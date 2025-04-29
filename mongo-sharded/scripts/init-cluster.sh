@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
-set -eux
-
-# Global check: Skip if cluster is already initialized
-if mongosh --quiet --host mongos-router0:27017 --eval 'sh.status().shards.length' | grep -q '[1-9]'; then
-  echo "Cluster already initialized. Exiting..."
-  exit 0
-fi
+set -ex
 
 function initiate_replica_set() {
     local host="$1"
@@ -30,18 +24,20 @@ function add_shard_if_not_exists() {
     local shard_name="$1"
     local shard_hosts="$2"
 
-    if mongosh --quiet --host mongos-router0:27017 --eval 'db.adminCommand({ listShards: 1 })' | grep -q "$shard_name"; then
-        echo "Shard $shard_name already exists, not adding again."
+    if mongosh --quiet --host mongos-router0:27017 --eval \
+        "db.adminCommand({ listShards: 1 }).shards.map(s => s._id).includes(\"${shard_name}\")" | grep -q "true"; then
+        echo "Shard $shard_name already exists, skipping."
         return
     fi
 
     echo "Adding shard $shard_name..."
-    mongosh --quiet --host mongos-router0:27017 --eval "sh.addShard(\"${shard_name}/${shard_hosts}\")" || {
+    mongosh --quiet --host mongos-router0:27017 --eval \
+        "sh.addShard(\"${shard_name}/${shard_hosts}\")" || {
         echo "Warning: Failed to add shard ${shard_name}. Continuing anyway."
     }
 }
 
-# 1. Config Servers
+# 1. Config servers
 initiate_replica_set "configdb-replica0:27017" '
     rs.initiate({
         _id: "config-rs", configsvr: true,
@@ -54,7 +50,22 @@ initiate_replica_set "configdb-replica0:27017" '
 '
 wait_for_primary "configdb-replica0:27017"
 
-# 2. Shard0
+# 2. Wait for mongos to be available
+echo "Waiting for mongos-router0 to be available..."
+until mongosh --quiet --host mongos-router0:27017 --eval 'db.adminCommand({ ping: 1 })' &>/dev/null; do
+    echo "Waiting for mongos-router0..."
+    sleep 2
+done
+echo "mongos-router0 is available!"
+
+# 3. Check if the cluster is already initialized
+if mongosh --quiet --host mongos-router0:27017 --eval \
+    '!!(sh.status().shards || []).length' | grep -q "true"; then
+    echo "Cluster already initialized. Exiting..."
+    exit 0
+fi
+
+# 4. Shards
 initiate_replica_set "shard0-replica0:27017" '
     rs.initiate({
         _id: "shard0-rs",
@@ -66,7 +77,6 @@ initiate_replica_set "shard0-replica0:27017" '
 '
 wait_for_primary "shard0-replica0:27017"
 
-# 3. Shard1
 initiate_replica_set "shard1-replica0:27017" '
     rs.initiate({
         _id: "shard1-rs",
@@ -78,7 +88,7 @@ initiate_replica_set "shard1-replica0:27017" '
 '
 wait_for_primary "shard1-replica0:27017"
 
-# 4. Add Shards
+# 5. Add shards if needed
 echo "Adding shards to mongos..."
 
 add_shard_if_not_exists "shard0-rs" "shard0-replica0:27017,shard0-replica1:27017"
