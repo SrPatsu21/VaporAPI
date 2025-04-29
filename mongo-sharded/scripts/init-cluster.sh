@@ -25,12 +25,14 @@ function add_shard_if_not_exists() {
     local shard_hosts="$2"
 
     if mongosh --quiet --host mongos-router0:27017 --eval 'db.adminCommand({ listShards: 1 })' | grep -q "$shard_name"; then
-        echo "Shard $shard_name already exists, not adding it again."
+        echo "Shard $shard_name already exists, not adding again."
         return
     fi
 
     echo "Adding shard $shard_name..."
-    mongosh --quiet --host mongos-router0:27017 --eval "sh.addShard(\"${shard_name}/${shard_hosts}\")"
+    mongosh --quiet --host mongos-router0:27017 --eval "sh.addShard(\"${shard_name}/${shard_hosts}\")" || {
+        echo "Warning: Failed to add shard ${shard_name}. Continuing anyway."
+    }
 }
 
 # 1. Config Servers
