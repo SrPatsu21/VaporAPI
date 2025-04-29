@@ -155,6 +155,8 @@ services:
 
 networks:
   bridge2mongo:
+    name: bridge2mongo
     driver: bridge
   brid2nginx:
+    name: brid2nginx
     driver: bridge

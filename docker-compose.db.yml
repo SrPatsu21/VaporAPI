@@ -1,163 +1,191 @@
+version: '3.8'
+
 services:
+# Config Servers
+    configdb-replica0:
+        container_name: configdb-replica0
+        image: mongo:6
+        command: mongod --configsvr --replSet config-rs --bind_ip_all --port 27017
+        networks: [ mongo-cluster ]
+        volumes: [ configdb-replica0:/data/db ]
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-#* MONGODB CONFIGDB
-  configdb-replica0:
-    container_name: configdb-replica0
-    build:
-      context: mongod
-    command: mongod -f /etc/mongod.conf --configsvr --replSet configdb
-    volumes:
-      - ./mongod/mongod.conf:/etc/mongod.conf
-      - configdb-data-replica0:/data/db
-    networks:
-      internalnetwork:
-        aliases:
-          - configdb-replica0
-    environment:
-      - REPSET_NAME=configdb
-      - DO_INIT_REPSET=true
-    expose:
-      - "27017"
+    configdb-replica1:
+        container_name: configdb-replica1
+        image: mongo:6
+        command: mongod --configsvr --replSet config-rs --bind_ip_all --port 27017
+        networks: [ mongo-cluster ]
+        volumes: [ configdb-replica1:/data/db ]
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  configdb-replica1:
-    container_name: configdb-replica1
-    build:
-      context: mongod
-    command: mongod -f /etc/mongod.conf --configsvr --replSet configdb
-    volumes:
-      - ./mongod/mongod.conf:/etc/mongod.conf
-      - configdb-data-replica1:/data/db
-    networks:
-      internalnetwork:
-        aliases:
-          - configdb-replica1
-    environment:
-      - REPSET_NAME=configdb
-    expose:
-      - "27017"
+    configdb-replica2:
+        container_name: configdb-replica2
+        image: mongo:6
+        command: mongod --configsvr --replSet config-rs --bind_ip_all --port 27017
+        networks: [ mongo-cluster ]
+        volumes: [ configdb-replica2:/data/db ]
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-#* MONGODB SHARD0
-  shard0-replica0:
-    container_name: shard0-replica0
-    build:
-      context: mongod
-    command: mongod -f /etc/mongod.conf --shardsvr --replSet shard0
-    volumes:
-      - ./mongod/mongod.conf:/etc/mongod.conf
-      - shard0-data-replica0:/data/db
-    networks:
-      internalnetwork:
-        aliases:
-          - shard0-replica0
-    environment:
-      - REPSET_NAME=shard0
-      - DO_INIT_REPSET=true
-    expose:
-      - "27017"
+# Shard 0 Replica Set
+    shard0-replica0:
+        container_name: shard0-replica0
+        image: mongo:6
+        command: mongod --shardsvr --replSet shard0-rs --bind_ip_all --port 27017
+        networks:
+            - mongo-cluster
+        volumes:
+            - shard0-replica0:/data/db
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  shard0-replica1:
-    container_name: shard0-replica1
-    build:
-      context: mongod
-    command: mongod -f /etc/mongod.conf --shardsvr --replSet shard0
-    volumes:
-      - ./mongod/mongod.conf:/etc/mongod.conf
-      - shard0-data-replica1:/data/db
-    networks:
-      internalnetwork:
-        aliases:
-          - shard0-replica1
-    environment:
-      - REPSET_NAME=shard0
-    expose:
-      - "27017"
+    shard0-replica1:
+        container_name: shard0-replica1
+        image: mongo:6
+        command: mongod --shardsvr --replSet shard0-rs --bind_ip_all --port 27017
+        networks:
+            - mongo-cluster
+        volumes:
+            - shard0-replica1:/data/db
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-#* MONGODB SHARD1
-  shard1-replica0:
-    container_name: shard1-replica0
-    build:
-      context: mongod
-    command: mongod -f /etc/mongod.conf --shardsvr --replSet shard1
-    volumes:
-      - ./mongod/mongod.conf:/etc/mongod.conf
-      - shard1-data-replica0:/data/db
-    networks:
-      internalnetwork:
-        aliases:
-          - shard1-replica0
-    environment:
-      - REPSET_NAME=shard1
-      - DO_INIT_REPSET=true
-    expose:
-      - "27017"
+    # Shard 1 Replica Set
+    shard1-replica0:
+        container_name: shard1-replica0
+        image: mongo:6
+        command: mongod --shardsvr --replSet shard1-rs --bind_ip_all --port 27017
+        networks:
+            - mongo-cluster
+        volumes:
+            - shard1-replica0:/data/db
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  shard1-replica1:
-    container_name: shard1-replica1
-    build:
-      context: mongod
-    command: mongod -f /etc/mongod.conf --shardsvr --replSet shard1
-    volumes:
-      - ./mongod/mongod.conf:/etc/mongod.conf
-      - shard1-data-replica1:/data/db
-    networks:
-      internalnetwork:
-        aliases:
-          - shard1-replica1
-    environment:
-      - REPSET_NAME=shard1
-    expose:
-      - "27017"
+    shard1-replica1:
+        container_name: shard1-replica1
+        image: mongo:6
+        command: mongod --shardsvr --replSet shard1-rs --bind_ip_all --port 27017
+        networks:
+            - mongo-cluster
+        volumes:
+            - shard1-replica1:/data/db
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-#* MONGODB MONGOS ROUTERS
-  mongos-router0:
-    container_name: mongos-router0
-    build:
-      context: mongos
-    command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
-    depends_on:
-      - shard0-replica0
-      - shard0-replica1
-      - shard1-replica0
-      - shard1-replica1
-      - configdb-replica0
-      - configdb-replica1
-    networks:
-      internalnetwork:
-          aliases:
-            - mongos-router0
-      bridge2mongo:
-    environment:
-      - SHARD_LIST=shard0/shard0-replica0:27017,shard0-replica1:27017;shard1/shard1-replica0:27017,shard1-replica1:27017,
-    expose:
-      - "27017"
-    ports:
-      - "27017:27017"  # Map the host workstation's port 27017 to the docker instance exposed port 27017 for 'direct' mongos access
+# Mongos Router
+    mongos-router0:
+        container_name: mongos-router0
+        image: mongo:6
+        command: mongos --configdb config-rs/configdb-replica0:27017,configdb-replica1:27017,configdb-replica2:27017 --bind_ip_all --port 27017
+        depends_on:
+            configdb-replica0:
+                condition: service_healthy
+            configdb-replica1:
+                condition: service_healthy
+            configdb-replica2:
+                condition: service_healthy
+        healthcheck:
+            test: ["CMD-SHELL",
+                    "mongosh --quiet --eval \"db.adminCommand({ ping:1 }).ok\""]
+            start_period: 5s
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        ports:
+            - "27017:27017"
+        networks:
+            - mongo-cluster
+            - bridge2mongo
 
-  #! we wont use for now
-  # mongos-router1:
-  #   container_name: mongos-router1
-  #   build:
-  #     context: mongos
-  #   command: mongos --port 27017 --bind_ip 0.0.0.0 --configdb "configdb/configdb-replica0:27017,configdb-replica1:27017"
-  #   networks:
-  #     internalnetwork:
-  #         aliases:
-  #           - mongos-router1
-  #     bridge2mongo:
-  #   expose:
-  #     - "27017"
-  #   ports:
-  #     - "27018:27017"  # Map the host workstation's port 27018 to the docker instance exposed port 27017 for 'direct' mongos access
+# Service to config init
+    mongo-init:
+        container_name: mongo-init
+        image: mongo:6
+        depends_on:
+            configdb-replica0:
+                condition: service_healthy
+            configdb-replica1:
+                condition: service_healthy
+            configdb-replica2:
+                condition: service_healthy
+        volumes:
+            - ./mongo-sharded/scripts:/scripts:ro
+        entrypoint: ["bash", "/scripts/init-cluster.sh"]
+        networks:
+            - mongo-cluster
+        restart: "no"
+
+    mongo-init-db:
+        container_name: mongo-init-db
+        image: mongo:6
+        depends_on:
+            mongo-init:
+                condition: service_completed_successfully
+            mongos-router0:
+                condition: service_healthy
+        volumes:
+            - ./mongo-sharded/scripts:/scripts:ro
+        entrypoint: ["bash", "/scripts/init-db.sh"]
+        environment:
+            - DB_NAME=${DB_BASE}
+            - DB_USER=${DB_USER}
+            - DB_PASS=${DB_PASS}
+            - SHARD_CONFIG=${DB_SHARD_CONFIG}
+        networks:
+            - mongo-cluster
+        restart: "no"
 
 networks:
-  internalnetwork: {}
-  bridge2mongo:
-    driver: bridge
+    mongo-cluster:
+        name: mongo-cluster
+        driver: bridge
+    bridge2mongo:
+        name: bridge2mongo
+        driver: bridge
 
 volumes:
-  configdb-data-replica0:
-  configdb-data-replica1:
-  shard0-data-replica0:
-  shard0-data-replica1:
-  shard1-data-replica0:
-  shard1-data-replica1:
+    configdb-replica0: {}
+    configdb-replica1: {}
+    configdb-replica2: {}
+    shard0-replica0: {}
+    shard0-replica1: {}
+    shard1-replica0: {}
+    shard1-replica1: {}

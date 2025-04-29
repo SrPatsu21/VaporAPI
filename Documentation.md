@@ -11,22 +11,25 @@ The only thing you must change is the `DB_PASS=strong_password` when you define 
 ### CONFIG API
 
 #### Run
-In the first run, you will need to run the docker docker-compose.web.yml.
+In the first run, you will need to run the chmod.
 
 ```bash
-docker compose -f ./docker-compose.web.yml up --build
+chmod +x ./startdocker.sh
+chmod +x ./stopdocker.sh
 ```
 
-Before the first run, you can just run.
+##### Now you can run both of the scripts
+
+To start:
 
 ```bash
-docker compose -f ./docker-compose.db.yml up
+./startdocker.sh
 ```
 
-Or if you don’t want to see the log (-d for detach).
+To stop:
 
 ```bash
-docker compose -f ./docker-compose.db.yml up -d
+./stopdocker.sh
 ```
 
 #### Configure mode
@@ -34,6 +37,8 @@ docker compose -f ./docker-compose.db.yml up -d
 At `.env` you probably have something like "API_MODE=dev". You can switch between {prod, dev}; it changes what `npm` will run.
 
 ### Config Database Servers
+
+#### **You don't need to do anything here the script do this and more.**
 
 #### Run
 
