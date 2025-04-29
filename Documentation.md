@@ -88,11 +88,11 @@ sh.setBalancerState(true);
 ```
 Configure sharding
 ```shell
-sh.shardCollection("VaporBase.Users", { username: 1 })
-sh.shardCollection("VaporBase.Categories", { categorySTR: 1 })
+sh.shardCollection("VaporBase.Users", { _id: "hashed" })
+sh.shardCollection("VaporBase.Categories", { _id: "hashed" })
 sh.shardCollection("VaporBase.Products", { _id: "hashed" })
-sh.shardCollection("VaporBase.Tags", { tagSTR: 1 })
-sh.shardCollection("VaporBase.Titles", { titleSTR: 1 })
+sh.shardCollection("VaporBase.Tags", { _id: "hashed" })
+sh.shardCollection("VaporBase.Titles", { t_id: "hashed" })
 
 ```
 

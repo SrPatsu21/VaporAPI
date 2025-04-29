@@ -2,7 +2,7 @@
 
 # Wait for the config server replica set to elect a primary
 echo "Waiting for config server replica set to elect a primary..."
-until mongosh --host configdb-replica0:27017 --eval 'rs.status().members.some(m => m.stateStr === "PRIMARY")' | grep -q 'true'; do
+until mongosh --host rs-config-server/configdb-replica0:27017,configdb-replica1:27017,configdb-replica2:27017 --eval 'rs.status().members.some(m => m.stateStr === "PRIMARY")' | grep -q 'true'; do
     sleep 5
 done
 
@@ -11,7 +11,7 @@ for shard in 0 1; do
     replica_set="rs-shard-${shard}"
     host_prefix="shard${shard}-replica"
     echo "Waiting for ${replica_set} to elect a primary..."
-    until mongosh --host ${host_prefix}0:27017 --eval 'rs.status().members.some(m => m.stateStr === "PRIMARY")' | grep -q 'true'; do
+    until mongosh --host ${replica_set}/${host_prefix}0:27017,${host_prefix}1:27017 --eval 'rs.status().members.some(m => m.stateStr === "PRIMARY")' | grep -q 'true'; do
         sleep 5
     done
 done

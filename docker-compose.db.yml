@@ -23,7 +23,6 @@ services:
             - configdb-replica1_config:/data/configdb
         networks:
             - mongo-cluster
-        entrypoint: ["/scripts/entrypoint-configserver.sh"]
         restart: always
 
     configdb-replica2:
@@ -35,7 +34,6 @@ services:
             - configdb-replica2_config:/data/configdb
         networks:
             - mongo-cluster
-        entrypoint: ["/scripts/entrypoint-configserver.sh"]
         restart: always
 
 # Shard 0 Replica Set
@@ -60,7 +58,6 @@ services:
             - shard0-replica1_config:/data/configdb
         networks:
             - mongo-cluster
-        entrypoint: ["/bin/sh", "/scripts/entrypoint-shard0.sh"]
         restart: always
 
 # Shard 1 Replica Set
@@ -85,7 +82,6 @@ services:
             - shard1-replica1_config:/data/configdb
         networks:
             - mongo-cluster
-        entrypoint: ["/bin/sh", "/scripts/entrypoint-shard1.sh"]
         restart: always
 
 # Mongos Router
@@ -98,7 +94,7 @@ services:
             - mongos-router0_config:/data/configdb
         entrypoint: ["/scripts/entrypoint-route.sh"]
         ports:
-            - "27017:27017" #!changed
+            - "27117:27017"
         networks:
             - mongo-cluster
             - bridge2mongo
