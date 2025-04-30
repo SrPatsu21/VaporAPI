@@ -23,13 +23,13 @@ wait_for_mongo() {
 
     # First wait for local instance
     until check_mongo_ready 127.0.0.1; do
-            echo "Waiting for local MongoDB to start..."
-            # Check if MongoDB process is still running
-            if ! kill -0 $MONGO_PID 2>/dev/null; then
-                echo "MongoDB process died unexpectedly. Check logs for errors."
-                exit 1
-            fi
-            sleep 2
+        echo "Waiting for local MongoDB to start..."
+        # Check if MongoDB process is still running
+        if ! kill -0 $MONGO_PID 2>/dev/null; then
+            echo "MongoDB process died unexpectedly. Check logs for errors."
+            exit 1
+        fi
+        sleep 2
     done
     echo "Local MongoDB is ready!"
 

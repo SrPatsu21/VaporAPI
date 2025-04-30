@@ -39,28 +39,29 @@ At `.env` you probably have something like "API_MODE=dev". You can switch betwee
 
 ### Config Database Servers
 
-#### **You don't need to do anything here the script do this and more.**
-
 #### Run
 
-In the first run, you will need to run the docker docker-compose.db.yml. We will give more details about what it actually does later.
+In the first run, you will need to run the chmod to make the script executable.
 
 ```bash
-docker compose -f ./docker-compose.db.yml up --build
+chmod +x ./mongo-cluster/*.sh
 ```
 
-Before the first run, you can just run.
-
-```bash
-docker compose -f ./docker-compose.db.yml up
-```
-
-Or if you don`t want to see the log (-d for detach).
+Now you can run the docker compouse
 
 ```bash
 docker compose -f ./docker-compose.db.yml up -d
 ```
+
+Before conteiners are ready (may take a time ">20s" because of sharding), run the script to create user, db, shardkey, more...
+
+```bash
+docker exec -it mongos-router0 mongosh /script/db-seed-user.js
+```
+
 #### Create User and Database
+
+#### **You don't need to do anything here, the previous script do this for you, do this just in case you are deploying this api.**
 
 To connect to the db you will need a user. You can do this connecting to the mongosh
 
