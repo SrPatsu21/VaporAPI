@@ -56,7 +56,7 @@ docker compose -f ./docker-compose.db.yml up -d
 Before conteiners are ready (may take a time ">20s" because of sharding), run the script to create user, db, shardkey, more...
 
 ```bash
-docker exec -it mongos-router0 mongosh /script/db-seed-user.js
+docker exec -it mongos-router0 mongosh /scripts/db-seed-user.js
 ```
 
 #### Create User and Database
