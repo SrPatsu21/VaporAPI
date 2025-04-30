@@ -10,29 +10,6 @@ The only thing you must change is the `DB_PASS=strong_password` when you define 
 
 ### CONFIG API
 
-#### Run
-In the first run, you will need to run the chmod.
-
-```bash
-chmod +x ./startdocker.sh
-chmod +x ./stopdocker.sh
-chmod +x ./startinitdocker.sh
-```
-
-##### Now you can run both of the scripts
-
-To start:
-
-```bash
-./startdocker.sh
-```
-
-To stop:
-
-```bash
-./stopdocker.sh
-```
-
 #### Configure mode
 
 At `.env` you probably have something like "API_MODE=dev". You can switch between {prod, dev}; it changes what `npm` will run.
