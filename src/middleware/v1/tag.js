@@ -1,11 +1,6 @@
 const { Tags } = require('../../models/Tag.js')
 
 //! ADMIN ONLY
-/*
-{
-    "tagSTR": "string",
-}
-*/
 const createTag = async (req, res, next) => {
     try {
         const { tagSTR } = req.body;
@@ -37,11 +32,6 @@ const getTag = async (req, res, next) => {
 };
 
 //! ADMIN ONLY
-/*
-{
-    "tagSTR": "string",
-}
-*/
 const updateTag = async (req, res, next) => {
     try {
         if (!req.body.tagSTR) {
@@ -69,11 +59,6 @@ const updateTag = async (req, res, next) => {
     }
 };
 
-/*
-{
-    "tagSTR": "string",
-}
-*/
 const searchTag = async (req, res, next) => {
     try {
         const { tagSTR , limit, skip } = req.query;

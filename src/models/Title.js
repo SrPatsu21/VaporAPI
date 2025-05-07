@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const MAX_SIZE_MB = 2; // 2MB max file size
-const MAX_WIDTH = 1920;
-const MAX_HEIGHT = 1080;
-const ALLOWED_FORMATS = ['jpeg', 'jpg', 'png']; // Allowed formats
-
 const titleSchema = new Schema(
     {
         _id: {
@@ -28,6 +23,12 @@ const titleSchema = new Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Tags'
         }],
+        imageURL: {
+            type: "string",
+            trim: true,
+            maxlength: 128,
+            description: "must be a string and is required",
+        },
     },
     { collection: "Titles", timestamps: true },
 );
