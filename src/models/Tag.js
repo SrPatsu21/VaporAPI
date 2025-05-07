@@ -15,6 +15,11 @@ const tagSchema  = new Schema(
             maxlength: 48,
             description: "must be a string and is required",
         },
+        deleted: {
+            type: Boolean,
+            default: false, // Default is non-deleted user
+            description: "Indicates if the user was deactivat",
+        },
     },
     { collection: "Tags", timestamps: true },
 );

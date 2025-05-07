@@ -182,6 +182,10 @@ router.put("/:id", authenticate, isAdmin, updateCategory, async (req, res) => {
  *         schema:
  *           type: string
  *       - in: query
+ *         name: deleted
+ *         schema:
+ *           type: boolean
+ *       - in: query
  *         name: limit
  *         required: false
  *         description: Limit number of results (default 100, max 100)
@@ -222,7 +226,7 @@ router.get("", searchCategory, async (req, res) => {
  * @swagger
  * /api/v1/category/{id}:
  *   delete:
- *     summary: Delete a category
+ *     summary: Soft Delete a category
  *     tags: [Category]
  *     security:
  *       - bearerAuth: []

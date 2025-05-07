@@ -59,19 +59,23 @@ const updateTitle = async (req, res, next) => {
     }
 };
 
-//TODO fix make the query better
+//TODO fix make the query better for tags
 const searchTitle = async (req, res, next) => {
     try {
-        const { titleSTR, category, limit = 10, skip = 0 } = req.query;
+        const { titleSTR, category, deleted, limit = 10, skip = 0 } = req.query;
         const query = {};
 
         if (titleSTR) query.titleSTR = new RegExp(titleSTR, 'i');
         if (category) query.category = category;
+        query.deleted = false
+        if (deleted) query.deleted = deleted;
+        else query.deleted = false;
 
         const foundTitles = await Titles.find(query)
             .populate('category tags')
             .limit(parseInt(limit))
-            .skip(parseInt(skip));
+            .skip(parseInt(skip))
+            .select("-createdAt -updatedAt -__v");
 
         req.foundTitles = foundTitles;
         next();
@@ -84,11 +88,11 @@ const searchTitle = async (req, res, next) => {
 const deleteTitle = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const deletedTitle = await Titles.findByIdAndDelete(id);
+        const deleted = await Titles.findByIdAndUpdate(id, { deleted: true }, { new: true });
 
-        if (!deletedTitle) return res.status(404).json({ error: 'Title not found' });
+        if (!deleted) return res.status(404).json({ error: 'Title not found' });
 
-        req.deletedTitle = deletedTitle;
+        req.deletedTitle = deleted;
         next();
     } catch (error) {
         next(error);

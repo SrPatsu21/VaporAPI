@@ -29,6 +29,11 @@ const titleSchema = new Schema(
             maxlength: 128,
             description: "must be a string and is required",
         },
+        deleted: {
+            type: Boolean,
+            default: false, // Default is non-deleted user
+            description: "Indicates if the user was deactivat",
+        },
     },
     { collection: "Titles", timestamps: true },
 );

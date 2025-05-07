@@ -61,9 +61,12 @@ const updateTag = async (req, res, next) => {
 
 const searchTag = async (req, res, next) => {
     try {
-        const { tagSTR , limit, skip } = req.query;
+        const { tagSTR , deleted, limit, skip } = req.query;
         const query = { };
         if (tagSTR) query.tagSTR = tagSTR;
+        query.deleted = false
+        if (deleted) query.deleted = deleted;
+
         let limited = 100;
         if(limit){
             if (limit > 100) limited = limit;
@@ -83,7 +86,7 @@ const searchTag = async (req, res, next) => {
 const deleteTag = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const deleted = await Tags.findByIdAndDelete(id);
+        const deleted = await Tags.findByIdAndUpdate(id, { deleted: true }, { new: true });
         if (!deleted) return res.status(404).json({ message: "Tag not found" });
 
         req.deletedTag = deleted;

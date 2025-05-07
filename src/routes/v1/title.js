@@ -150,6 +150,10 @@ router.put("/:id", authenticate, isAdmin, updateTitle, async (req, res) => {
  *         schema:
  *           type: string
  *       - in: query
+ *         name: deleted
+ *         schema:
+ *           type: boolean
+ *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
@@ -175,7 +179,7 @@ router.get("", searchTitle, async (req, res) => {
  * @swagger
  * /api/v1/title/{id}:
  *   delete:
- *     summary: Delete a title
+ *     summary: Soft Delete a title
  *     tags: [Title]
  *     security:
  *       - bearerAuth: []

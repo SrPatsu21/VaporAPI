@@ -76,9 +76,11 @@ const updateCategory = async (req, res, next) => {
 */
 const searchCategory = async (req, res, next) => {
     try {
-        const { categorySTR, limit, skip } = req.query;
+        const { categorySTR, deleted, limit, skip } = req.query;
         const query = { };
         if (categorySTR) query.categorySTR = categorySTR;
+        query.deleted = false
+        if (deleted) query.deleted = deleted;
         let limited = 100;
         if(limit){
             if (limit > 100) limited = limit;
@@ -98,7 +100,7 @@ const searchCategory = async (req, res, next) => {
 const deleteCategory = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const deleted = await Categories.findByIdAndDelete(id);
+        const deleted = await Categories.findByIdAndUpdate(id, { deleted: true }, { new: true });
         if (!deleted) return res.status(404).json({ message: "Category not found" });
 
         req.deletedCategory = deleted;

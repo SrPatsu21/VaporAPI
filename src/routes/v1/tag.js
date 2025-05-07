@@ -186,6 +186,10 @@ router.put("/:id", authenticate, isAdmin, updateTag, async (req, res) => {
  *           type: string
  *         description: Filter by tag string
  *       - in: query
+ *         name: deleted
+ *         schema:
+ *           type: boolean
+ *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
@@ -224,7 +228,7 @@ router.get("", searchTag, async (req, res) => {
  * @swagger
  * /api/v1/tag/{id}:
  *   delete:
- *     summary: Delete a tag
+ *     summary: Soft Delete a tag
  *     tags: [Tag]
  *     security:
  *       - bearerAuth: []
