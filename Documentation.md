@@ -36,9 +36,21 @@ Before conteiners are ready (may take a time ">20s" because of sharding), run th
 docker exec -it mongos-router0 mongosh /scripts/db-seed-user.js
 ```
 
+### API cert
+
+Run this command to create a Self-Signed SSL cert:
+```
+mkdir ./certs
+openssl req -x509 -nodes -days 365 \
+  -newkey rsa:2048 \
+  -keyout ./certs/privkey.pem \
+  -out ./certs/fullchain.pem \
+  -subj "/CN=localhost"
+```
+
 #### Create User and Database
 
-#### **You don't need to do anything here, the previous script do this for you, do this just in case you are deploying this api.**
+##### **You don't need to do anything here, the previous script do this for you, do this just in case you are deploying this api.**
 
 To connect to the db you will need a user. You can do this connecting to the mongosh
 

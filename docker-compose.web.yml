@@ -21,9 +21,6 @@ services:
       - .env
     environment:
       - PORT=${PORT_API1}
-    depends_on:
-      cert-generator:
-        condition: service_healthy
     # attach: false
     # logging:
     #   driver: "none"
@@ -51,9 +48,6 @@ services:
       - .env
     environment:
       - PORT=${PORT_API2}
-    depends_on:
-      cert-generator:
-        condition: service_healthy
     # attach: false
     # logging:
     #   driver: "none"
@@ -81,28 +75,12 @@ services:
       - .env
     environment:
       - PORT=${PORT_API3}
-    depends_on:
-      cert-generator:
-        condition: service_healthy
     # attach: false
     # logging:
     #   driver: "none"
     networks:
       brid2nginx:
       bridge2mongo:
-
-#Backup api
-  backup_api:
-    image: busybox:latest
-    container_name: backup_api
-    volumes:
-      - ./backup:/var/www
-    command: ["httpd", "-f", "-p", "3000", "-h", "/var/www"]
-    depends_on:
-      cert-generator:
-        condition: service_healthy
-    networks:
-      brid2nginx:
 
 #* NGINX
   nginx:
@@ -122,34 +100,9 @@ services:
         condition: service_started
       api3:
         condition: service_started
-      cert-generator:
-        condition: service_healthy
     attach: false
     logging:
       driver: "none"
-    networks:
-      brid2nginx:
-
-
-#cert generator
-  cert-generator:
-    image: alpine:latest
-    container_name: cert-generator
-    volumes:
-      - ./certs:/etc/letsencrypt
-    command: >
-      /bin/sh -c "
-        apk add openssl &&
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/letsencrypt/privkey.pem -out /etc/letsencrypt/fullchain.pem -subj '/CN=localhost' &&
-        chown -R 101:101 /etc/letsencrypt &&
-        tail -f /dev/null  # Keeps the container active after generating the cert
-      "
-    healthcheck:
-      test: ["CMD", "test", "-f", "/etc/letsencrypt/fullchain.pem"]  # Verifies that the certificate has been generated
-      interval: 5s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
     networks:
       brid2nginx:
 
