@@ -26,7 +26,7 @@ const titleSchema = new Schema(
         imageURL: {
             type: "string",
             trim: true,
-            maxlength: 128,
+            maxlength: 512,
             description: "must be a string and is required",
         },
         deleted: {

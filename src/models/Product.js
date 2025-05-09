@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const MAX_SIZE_MB = 2; // 2MB max file size
-const MAX_WIDTH = 1920;
-const MAX_HEIGHT = 1080;
-const ALLOWED_FORMATS = ['jpeg', 'jpg', 'png']; // Allowed formats
-
 const productSchema = new Schema(
     {
         _id: {
@@ -21,10 +16,27 @@ const productSchema = new Schema(
         },
         description: {
             type: "string",
+            trim: true,
+            description: "must be a string",
+        },
+        imageURL: {
+            type: "string",
+            trim: true,
+            maxlength: 512,
+            description: "must be a string",
+        },
+        magnetLink:{
+            type: String,
             required: true,
             trim: true,
-            description: "must be a string and is required",
+            description: "must be a string and a magnect link"
         },
+        othersUrl:[{
+            type: String,
+            trim: true,
+            maxlength: 512,
+            description: "A list of related URLs for the product"
+        }],
         timesDownloaded:
         {
             type: Number,
@@ -33,10 +45,21 @@ const productSchema = new Schema(
             description: "Tracks how many times the product has been downloaded",
         },
         title:{
-            type: mongoose.Schema.Types.ObjectId, ref: 'Titles'
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Titles',
+            required: true,
+            description: "must be a ObjectId and is required"
         },
+        tags: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Tags',
+            description: "must be a ObjectId"
+        }],
         owner:{
-            type: mongoose.Schema.Types.ObjectId, ref: 'User'
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
+            description: "must be a ObjectId and is required"
         },
         version:{
             type: "string",
@@ -45,10 +68,10 @@ const productSchema = new Schema(
             maxlength: 40,
             description: "must be a string and is required",
         },
-        active: {
+        deleted: {
             type: Boolean,
-            default: true, // Default is active user
-            description: "Indicates if the user account is active",
+            default: false,
+            description: "Indicates if the product is deleted",
         }
     },
     {collection: "Products", timestamps: true}
@@ -60,5 +83,4 @@ const Products = mongoose.model('Products', productSchema);
 // Export the model
 module.exports = {
     Products: Products,
-
 };
