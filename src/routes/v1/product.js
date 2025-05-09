@@ -9,7 +9,7 @@ const {
     searchProduct,
     deleteProduct,
     restoreProduct,
-        } = require('../../middleware/v1/product.js');
+} = require('../../middleware/v1/product.js');
 
 const router = express.Router();
 
@@ -26,7 +26,28 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ProductInput'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               imageURL:
+ *                 type: string
+ *               magnetLink:
+ *                 type: string
+ *               othersUrl:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               title:
+ *                 type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               version:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Product successfully created
@@ -36,7 +57,11 @@ const router = express.Router();
  *         description: Unauthorized
  */
 router.post("/", authenticate, createProduct, (req, res) => {
-    res.status(201).json(req.createdProduct);
+    try {
+        res.status(201).json(req.createdProduct);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 });
 
 /**
@@ -85,7 +110,11 @@ router.post("/", authenticate, createProduct, (req, res) => {
  *         description: Server error
  */
 router.get("/", searchProduct, (req, res) => {
-    res.status(200).json(req.foundProducts);
+    try {
+        res.status(200).json(req.foundProducts);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 /**
@@ -107,7 +136,11 @@ router.get("/", searchProduct, (req, res) => {
  *         description: Product not found
  */
 router.get("/:id", getProduct, (req, res) => {
-    res.status(200).json(req.foundProduct);
+    try {
+        res.status(200).json(req.foundProduct);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
 });
 
 /**
@@ -129,7 +162,28 @@ router.get("/:id", getProduct, (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ProductInput'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               imageURL:
+ *                 type: string
+ *               magnetLink:
+ *                 type: string
+ *               othersUrl:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               title:
+ *                 type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               version:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Product successfully updated
@@ -141,7 +195,11 @@ router.get("/:id", getProduct, (req, res) => {
  *         description: Product not found
  */
 router.put("/:id", authenticate, isOwner, updateProduct, (req, res) => {
-    res.status(200).json(req.updatedProduct);
+    try {
+        res.status(200).json(req.updatedProduct);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 });
 
 /**
@@ -162,7 +220,28 @@ router.put("/:id", authenticate, isOwner, updateProduct, (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ProductInput'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               imageURL:
+ *                 type: string
+ *               magnetLink:
+ *                 type: string
+ *               othersUrl:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               title:
+ *                 type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               version:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Product updated successfully
@@ -174,7 +253,11 @@ router.put("/:id", authenticate, isOwner, updateProduct, (req, res) => {
  *         description: Product not found
  */
 router.patch("/:id", authenticate, isOwner, patchProduct, (req, res) => {
-    res.status(200).json(req.updatedProduct);
+    try {
+        res.status(200).json(req.updatedProduct);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 });
 
 /**
@@ -200,7 +283,11 @@ router.patch("/:id", authenticate, isOwner, patchProduct, (req, res) => {
  *         description: Product not found
  */
 router.delete("/:id", authenticate, isOwner, deleteProduct, (req, res) => {
-    res.status(200).json(req.deletedProduct);
+    try {
+        res.status(200).json(req.deletedProduct);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 });
 
 /**
@@ -226,7 +313,11 @@ router.delete("/:id", authenticate, isOwner, deleteProduct, (req, res) => {
  *         description: Product not found
  */
 router.patch("/:id/restore", authenticate, isOwner, restoreProduct, (req, res) => {
-    res.status(200).json(req.restoredProd);
+    try {
+        res.status(200).json(req.restoredProd);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 });
 
 module.exports = router;
