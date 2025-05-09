@@ -5,9 +5,11 @@ const {
     createProduct,
     getProduct,
     updateProduct,
+    patchProduct,
     searchProduct,
     deleteProduct,
-    restoreProduct
+    restoreProduct,
+    newDownload
         } = require('../../middleware/v1/product.js');
 
 const router = express.Router();
@@ -25,27 +27,7 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - description
- *               - title
- *               - version
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               imageURL:
- *                 type: string
- *               title:
- *                 type: string
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *               version:
- *                 type: string
+ *             $ref: '#/components/schemas/ProductInput'
  *     responses:
  *       201:
  *         description: Product successfully created
@@ -53,43 +35,9 @@ const router = express.Router();
  *         description: Bad request
  *       401:
  *         description: Unauthorized
- *       500:
- *         description: Server error
  */
-router.post("/", authenticate, createProduct, async (req, res) => {
-    try {
-        res.status(201).json(req.createdProduct);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-/**
- * @swagger
- * /api/v1/products/{id}:
- *   get:
- *     summary: Get a product by ID
- *     tags: [Product]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Product found
- *       404:
- *         description: Product not found
- *       500:
- *         description: Server error
- */
-router.get("/:id", getProduct, async (req, res) => {
-    try {
-        res.status(200).json(req.foundProduct);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+router.post("/", authenticate, createProduct, (req, res) => {
+    res.status(201).json(req.createdProduct);
 });
 
 /**
@@ -137,12 +85,30 @@ router.get("/:id", getProduct, async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.get("/", searchProduct, async (req, res) => {
-    try {
-        res.status(200).json(req.foundProducts);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+router.get("/", searchProduct, (req, res) => {
+    res.status(200).json(req.foundProducts);
+});
+
+/**
+ * @swagger
+ * /api/v1/products/{id}:
+ *   get:
+ *     summary: Get a product by ID
+ *     tags: [Product]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Product found
+ *       404:
+ *         description: Product not found
+ */
+router.get("/:id", getProduct, (req, res) => {
+    res.status(200).json(req.foundProduct);
 });
 
 /**
@@ -164,47 +130,24 @@ router.get("/", searchProduct, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               imageURL:
- *                 type: string
- *               title:
- *                 type: string
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *               version:
- *                 type: string
+ *             $ref: '#/components/schemas/ProductInput'
  *     responses:
  *       200:
  *         description: Product successfully updated
  *       400:
  *         description: Bad request
- *       401:
- *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
  *         description: Product not found
- *       500:
- *         description: Server error
  */
-router.put("/:id", authenticate, isOwner, updateProduct, async (req, res) => {
-    try {
-        res.status(200).json(req.updatedProduct);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+router.put("/:id", authenticate, isOwner, updateProduct, (req, res) => {
+    res.status(200).json(req.updatedProduct);
 });
 
 /**
  * @swagger
- * /api/v1/product/{id}:
+ * /api/v1/products/{id}:
  *   patch:
  *     summary: Partially update a product
  *     tags: [Product]
@@ -217,46 +160,22 @@ router.put("/:id", authenticate, isOwner, updateProduct, async (req, res) => {
  *         schema:
  *           type: string
  *     requestBody:
- *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               imageURL:
- *                 type: string
- *               title:
- *                 type: string
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
- *               version:
- *                 type: string
+ *             $ref: '#/components/schemas/ProductInput'
  *     responses:
  *       200:
  *         description: Product updated successfully
  *       400:
  *         description: Invalid input
- *       401:
- *         description: Unauthorized
  *       403:
- *         description: Forbidden - not the owner
+ *         description: Forbidden
  *       404:
  *         description: Product not found
- *       500:
- *         description: Server error
  */
-router.patch("/:id", authenticate, isOwner, patchProduct, async (req, res) => {
-    try {
-        res.status(200).json(req.updatedProduct);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+router.patch("/:id", authenticate, isOwner, patchProduct, (req, res) => {
+    res.status(200).json(req.updatedProduct);
 });
 
 /**
@@ -276,28 +195,20 @@ router.patch("/:id", authenticate, isOwner, patchProduct, async (req, res) => {
  *     responses:
  *       200:
  *         description: Product successfully deleted
- *       401:
- *         description: Unauthorized
  *       403:
  *         description: Forbidden
  *       404:
  *         description: Product not found
- *       500:
- *         description: Server error
  */
-router.delete("/:id", authenticate, isOwner, deleteProduct, async (req, res) => {
-    try {
-        res.status(200).json(req.deletedProduct);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+router.delete("/:id", authenticate, isOwner, deleteProduct, (req, res) => {
+    res.status(200).json(req.deletedProduct);
 });
 
 /**
  * @swagger
  * /api/v1/products/{id}/restore:
  *   patch:
- *     summary: Restore a deleted product
+ *     summary: Restore a soft-deleted product
  *     tags: [Product]
  *     security:
  *       - bearerAuth: []
@@ -309,22 +220,36 @@ router.delete("/:id", authenticate, isOwner, deleteProduct, async (req, res) => 
  *           type: string
  *     responses:
  *       200:
- *         description: Product successfully restored
- *       401:
- *         description: Unauthorized
+ *         description: Product restored successfully
  *       403:
  *         description: Forbidden
  *       404:
- *         description: Product not found or not deleted
- *       500:
- *         description: Server error
+ *         description: Product not found
  */
-router.patch("/restore/:id", authenticate, isOwner, restoreProduct, async (req, res) => {
-    try {
-        res.status(200).json(req.restoredProd);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+router.patch("/:id/restore", authenticate, isOwner, restoreProduct, (req, res) => {
+    res.status(200).json(req.restoredProd);
+});
+
+/**
+ * @swagger
+ * /api/v1/products/{id}/download:
+ *   post:
+ *     summary: Register a product download (increments counter)
+ *     tags: [Product]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Download registered
+ *       404:
+ *         description: Product not found
+ */
+router.post("/:id/download", newDownload, (req, res) => {
+    res.status(200).json(req.updatedProduct);
 });
 
 module.exports = router;

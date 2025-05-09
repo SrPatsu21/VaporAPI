@@ -22,6 +22,8 @@ const isOwner = async (req, res, next) => {
     "name": "Product Name",
     "description": "Product description",
     "imageURL": "https://...",
+    "magnetLink": "magnet:?xt=urn:btih:5F4DCC",
+    "othersUrl": ["https://..."],
     "title": "<Title ObjectId>",
     "tags": ["<Tag ObjectId>", ...],
     "owner": "<User ObjectId>",
@@ -30,10 +32,10 @@ const isOwner = async (req, res, next) => {
 */
 const createProduct = async (req, res, next) => {
     try {
-        const { name, description, imageURL, title, tags, version } = req.body;
+        const { name, description, imageURL, magnetLink, othersUrl, title, tags, version } = req.body;
         const owner = req.user.userId;
         // Required fields validation
-        if (!name || !title || !owner || !version ) {
+        if (!name || !title || !owner || !version || !magnetLink ) {
             return res.status(400).json({ error: 'name, description, and version are required.' });
         }
 
@@ -41,10 +43,16 @@ const createProduct = async (req, res, next) => {
         ? tags.split(',').map(t => t.trim()).filter(Boolean)
         : Array.isArray(tags) ? tags : [];
 
+        const othersUrlArray = typeof othersUrl === 'string'
+        ? othersUrl.split(',').map(t => t.trim()).filter(Boolean)
+        : Array.isArray(othersUrl) ? othersUrl : [];
+
         const product = new Products({
             name,
             description,
             imageURL,
+            magnetLink,
+            othersUrl: othersUrlArray,
             title,
             tags: tagsArray,
             owner,
@@ -85,18 +93,19 @@ const getProduct = async (req, res, next) => {
     "name": "Product Name",
     "description": "Product description",
     "imageURL": "https://...",
+    "magnetLink": "magnet:?xt=urn:btih:5F4DCC",
+    "othersUrl": ["https://..."],
     "title": "<Title ObjectId>",
     "tags": ["<Tag ObjectId>", ...],
-    "owner": "<User ObjectId>",
     "version": "1.0.0"
 }
 */
 const updateProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
-        let { name, description, imageURL, title, tags, version } = req.body;
+        let { name, description, imageURL, magnetLink, othersUrl, title, tags, version } = req.body;
 
-        if (!name || !title || !owner || !version ) {
+        if (!name || !title || !version || !magnetLink ) {
             return res.status(400).json({ error: 'name, description, and version are required.' });
         }
         if(!description)
@@ -105,17 +114,33 @@ const updateProduct = async (req, res, next) => {
         }
         if(!tags)
         {
-            const tagsArray = []
+            tags = []
         }else {
-            const tagsArray = typeof tags === 'string'
+            tags = typeof tags === 'string'
             ? tags.split(',').map(t => t.trim()).filter(Boolean)
             : Array.isArray(tags) ? tags : [];
         }
+        if(!othersUrl)
+            {
+                othersUrl = []
+            }else {
+                othersUrl = typeof othersUrl === 'string'
+                ? othersUrl.split(',').map(t => t.trim()).filter(Boolean)
+                : Array.isArray(othersUrl) ? othersUrl : [];
+            }
         if(!imageURL){
             imageURL = ""
         }
 
-        const update = { name, description, imageURL, title, tags:tagsArray, version }
+        const update = { name,
+                description,
+                imageURL,
+                magnetLink,
+                othersUrl,
+                title,
+                tags,
+                version
+            }
 
         const updatedProduct = await Titles.findByIdAndUpdate(id, update, {
             new: true,
@@ -142,6 +167,8 @@ const updateProduct = async (req, res, next) => {
     "name": "Product Name",
     "description": "Product description",
     "imageURL": "https://...",
+    "magnetLink": "magnet:?xt=urn:btih:5F4DCC",
+    "othersUrl": ["https://..."],
     "title": "<Title ObjectId>",
     "tags": ["<Tag ObjectId>", ...],
     "version": "1.0.0"
@@ -158,6 +185,8 @@ const patchProduct = async (req, res, next) => {
         updates.title = req.body.title
         updates.tags = req.body.tags
         updates.version = req.body.version
+        updates.magnetLink = req.body.magnetLink
+        updates.othersUrl = req.body.othersUrl
 
         // Parse tags if needed
         if (updates.tags) {
@@ -193,7 +222,8 @@ const patchProduct = async (req, res, next) => {
  *  - minDownloads (Number)
  *  - maxDownloads (Number)
  *  - deleted (true/false)
- *  - limit, skip
+ *  - limit
+ *  - skip
  */
 const searchProduct = async (req, res, next) => {
     try {
@@ -218,7 +248,7 @@ const searchProduct = async (req, res, next) => {
         const products = await Products.find(query)
             .limit(lim)
             .skip(sk)
-            .select('-__v -createdAt -updatedAt')
+            .select('-magnetLink -othersUrl -deleted -__v -createdAt -updatedAt')
             .populate('title')
             .populate('tags')
             .populate('owner');
@@ -257,6 +287,27 @@ const restoreProduct = async (req, res, next) => {
     }
 }
 
+const newDownload = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const updatedProduct = await Products.findByIdAndUpdate(
+            id,
+            { $inc: { timesDownloaded: 1 } },
+            { new: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        req.updatedProduct = updatedProduct;
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
     isOwner,
     createProduct,
@@ -265,5 +316,6 @@ module.exports = {
     patchProduct,
     searchProduct,
     deleteProduct,
-    restoreProduct
+    restoreProduct,
+    newDownload
 };
