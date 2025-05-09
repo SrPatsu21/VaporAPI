@@ -9,7 +9,6 @@ const {
     searchProduct,
     deleteProduct,
     restoreProduct,
-    newDownload
         } = require('../../middleware/v1/product.js');
 
 const router = express.Router();
@@ -228,28 +227,6 @@ router.delete("/:id", authenticate, isOwner, deleteProduct, (req, res) => {
  */
 router.patch("/:id/restore", authenticate, isOwner, restoreProduct, (req, res) => {
     res.status(200).json(req.restoredProd);
-});
-
-/**
- * @swagger
- * /api/v1/products/{id}/download:
- *   post:
- *     summary: Register a product download (increments counter)
- *     tags: [Product]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Download registered
- *       404:
- *         description: Product not found
- */
-router.post("/:id/download", newDownload, (req, res) => {
-    res.status(200).json(req.updatedProduct);
 });
 
 module.exports = router;

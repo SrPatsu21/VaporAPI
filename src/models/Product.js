@@ -37,13 +37,6 @@ const productSchema = new Schema(
             maxlength: 512,
             description: "A list of related URLs for the product"
         }],
-        timesDownloaded:
-        {
-            type: Number,
-            default: 0,
-            min: 0, // Enforces non-negative values
-            description: "Tracks how many times the product has been downloaded",
-        },
         title:{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Titles',

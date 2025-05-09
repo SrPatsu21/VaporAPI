@@ -233,9 +233,6 @@ const searchProduct = async (req, res, next) => {
         if (name) query.name = name;
         if (owner) query.owner = owner;
         if (title) query.title = title;
-        // Filter by download count
-        if (minDownloads) query.timesDownloaded = { ...query.timesDownloaded, $gte: Number(minDownloads) };
-        if (maxDownloads) query.timesDownloaded = { ...query.timesDownloaded, $lte: Number(maxDownloads) };
 
         // Exclude deleted by default
         query.deleted = deleted === 'true' ? true : false;
@@ -287,27 +284,6 @@ const restoreProduct = async (req, res, next) => {
     }
 }
 
-const newDownload = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-
-        const updatedProduct = await Products.findByIdAndUpdate(
-            id,
-            { $inc: { timesDownloaded: 1 } },
-            { new: true }
-        );
-
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-
-        req.updatedProduct = updatedProduct;
-        next();
-    } catch (err) {
-        next(err);
-    }
-}
-
 module.exports = {
     isOwner,
     createProduct,
@@ -316,6 +292,5 @@ module.exports = {
     patchProduct,
     searchProduct,
     deleteProduct,
-    restoreProduct,
-    newDownload
+    restoreProduct
 };

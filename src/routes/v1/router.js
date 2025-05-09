@@ -19,4 +19,7 @@ router.use("/tag", tagRoute)
 const titleRoute = require("./title")
 router.use("/title", titleRoute)
 
+const productRoute = require("./product")
+router.use("/product", productRoute)
+
 module.exports = router
