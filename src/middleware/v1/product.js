@@ -72,9 +72,19 @@ const getProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
         const product = await Products.findById(id)
-            .populate('title')
-            .populate('tags')
-            .populate('owner');
+            .select('-magnetLink -othersUrl -deleted -__v -createdAt -updatedAt')
+            .populate({
+                path: 'title',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'tags',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'owner',
+                select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
+            });
 
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
@@ -106,7 +116,7 @@ const updateProduct = async (req, res, next) => {
         let { name, description, imageURL, magnetLink, othersUrl, title, tags, version } = req.body;
 
         if (!name || !title || !version || !magnetLink ) {
-            return res.status(400).json({ error: 'name, description, and version are required.' });
+            return res.status(400).json({ error: 'name, title, description, and version are required.' });
         }
         if(!description)
         {
@@ -142,15 +152,24 @@ const updateProduct = async (req, res, next) => {
                 version
             }
 
-        const updatedProduct = await Titles.findByIdAndUpdate(id, update, {
+        const updatedProduct = await Products.findByIdAndUpdate(id, update, {
             new: true,
         })
-            .populate('title')
-            .populate('tags')
-            .populate('owner');
+            .populate({
+                path: 'title',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'tags',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'owner',
+                select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
+            });
 
 
-        if (!updated) {
+        if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
@@ -198,9 +217,18 @@ const patchProduct = async (req, res, next) => {
         const updatedProduct = await Products.findByIdAndUpdate(id, updates, {
             new: true,
         })
-            .populate('title')
-            .populate('tags')
-            .populate('owner');
+            .populate({
+                path: 'title',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'tags',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'owner',
+                select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
+            });
 
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
@@ -227,7 +255,7 @@ const patchProduct = async (req, res, next) => {
  */
 const searchProduct = async (req, res, next) => {
     try {
-        const { name, owner, title, minDownloads, maxDownloads, deleted, limit, skip } = req.query;
+        const { name, owner, title, deleted, limit, skip } = req.query;
         const query = {};
 
         if (name) query.name = name;
@@ -246,10 +274,18 @@ const searchProduct = async (req, res, next) => {
             .limit(lim)
             .skip(sk)
             .select('-magnetLink -othersUrl -deleted -__v -createdAt -updatedAt')
-            .populate('title')
-            .populate('tags')
-            .populate('owner');
-
+            .populate({
+                path: 'title',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'tags',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'owner',
+                select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
+            });
         req.foundProducts = products;
         next();
     } catch (err) {

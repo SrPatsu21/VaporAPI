@@ -15,7 +15,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/products:
+ * /api/v1/product:
  *   post:
  *     summary: Create a new product
  *     tags: [Product]
@@ -66,7 +66,7 @@ router.post("/", authenticate, createProduct, (req, res) => {
 
 /**
  * @swagger
- * /api/v1/products:
+ * /api/v1/product:
  *   get:
  *     summary: Search products
  *     tags: [Product]
@@ -119,7 +119,7 @@ router.get("/", searchProduct, (req, res) => {
 
 /**
  * @swagger
- * /api/v1/products/{id}:
+ * /api/v1/product/{id}:
  *   get:
  *     summary: Get a product by ID
  *     tags: [Product]
@@ -145,7 +145,7 @@ router.get("/:id", getProduct, (req, res) => {
 
 /**
  * @swagger
- * /api/v1/products/{id}:
+ * /api/v1/product/{id}:
  *   put:
  *     summary: Update a product
  *     tags: [Product]
@@ -204,7 +204,7 @@ router.put("/:id", authenticate, isOwner, updateProduct, (req, res) => {
 
 /**
  * @swagger
- * /api/v1/products/{id}:
+ * /api/v1/product/{id}:
  *   patch:
  *     summary: Partially update a product
  *     tags: [Product]
@@ -262,7 +262,7 @@ router.patch("/:id", authenticate, isOwner, patchProduct, (req, res) => {
 
 /**
  * @swagger
- * /api/v1/products/{id}:
+ * /api/v1/product/{id}:
  *   delete:
  *     summary: Soft delete a product
  *     tags: [Product]
@@ -292,7 +292,7 @@ router.delete("/:id", authenticate, isOwner, deleteProduct, (req, res) => {
 
 /**
  * @swagger
- * /api/v1/products/{id}/restore:
+ * /api/v1/product/{id}/restore:
  *   patch:
  *     summary: Restore a soft-deleted product
  *     tags: [Product]

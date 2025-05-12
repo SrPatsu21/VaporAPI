@@ -50,7 +50,7 @@ const productSchema = new Schema(
         }],
         owner:{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'Users',
             required: true,
             description: "must be a ObjectId and is required"
         },
