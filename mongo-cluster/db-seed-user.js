@@ -22,3 +22,4 @@ sh.shardCollection("VaporBase.Categories", { _id: "hashed" });
 sh.shardCollection("VaporBase.Products", { _id: "hashed" });
 sh.shardCollection("VaporBase.Tags", { _id: "hashed" });
 sh.shardCollection("VaporBase.Titles", { _id: "hashed" });
+sh.shardCollection("VaporBase.Images", { _id: "hashed" });

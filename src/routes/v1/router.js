@@ -22,4 +22,7 @@ router.use("/title", titleRoute)
 const productRoute = require("./product")
 router.use("/product", productRoute)
 
+const imageRoute = require("./image")
+router.use("/image", imageRoute)
+
 module.exports = router

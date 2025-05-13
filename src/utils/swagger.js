@@ -9,6 +9,34 @@ const options = {
             version: '1.0.0',
             description: 'Automatically generated documentation with Swagger JSDoc',
         },
+        tags: [
+            {
+                name: 'Auth'
+            },
+                {
+                name: 'User'
+            },
+                {
+                name: 'Product'
+            },
+            {
+                name: 'Title'
+            },
+            {
+                name: 'Category'
+            },
+            {
+                name: 'Tag'
+            },
+            {
+                name: 'Image',
+                description: 'AVOID USING THIS ENDPOINT!',
+            },
+            {
+                name: 'debug',
+                description: 'REMOVE THIS ENDPOINT!',
+            }
+        ],
         servers: [
             {
                 url: 'https://localhost',
