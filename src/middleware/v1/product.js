@@ -265,14 +265,16 @@ const searchProduct = async (req, res, next) => {
         // Exclude deleted by default
         query.deleted = deleted === 'true' ? true : false;
 
-        // Pagination
-        let lim = 100;
-        if (limit && Number(limit) > 0) lim = Math.min(Number(limit), 1000);
-        const sk = skip ? Number(skip) : 0;
+        let limited = 1000;
+        if(limit){
+            if (limit < 1000) limited = limit;
+        }
+        let skiped = 0;
+        if(skip) skiped = skip;
 
         const products = await Products.find(query)
-            .limit(lim)
-            .skip(sk)
+            .limit(limited)
+            .skip(skiped)
             .select('-magnetLink -othersUrl -deleted -__v -createdAt -updatedAt')
             .populate({
                 path: 'title',

@@ -62,7 +62,7 @@ const updateTitle = async (req, res, next) => {
 //TODO fix make the query better for tags
 const searchTitle = async (req, res, next) => {
     try {
-        const { titleSTR, category, deleted, limit = 10, skip = 0 } = req.query;
+        const { titleSTR, category, deleted, limit, skip } = req.query;
         const query = {};
 
         if (titleSTR) query.titleSTR = new RegExp(titleSTR, 'i');
@@ -71,10 +71,16 @@ const searchTitle = async (req, res, next) => {
         if (deleted) query.deleted = deleted;
         else query.deleted = false;
 
+        let limited = 100;
+        if(limit){
+            if (limit < 100) limited = limit;
+        }
+        const sk = skip ? Number(skip) : 0;
+
         const foundTitles = await Titles.find(query)
             .populate('category tags')
-            .limit(parseInt(limit))
-            .skip(parseInt(skip))
+            .limit(parseInt(limited))
+            .skip(parseInt(sk))
             .select("-createdAt -updatedAt -__v");
 
         req.foundTitles = foundTitles;

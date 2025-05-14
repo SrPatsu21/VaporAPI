@@ -25,4 +25,7 @@ router.use("/product", productRoute)
 const imageRoute = require("./image")
 router.use("/image", imageRoute)
 
+const SuggestionRoute = require("./suggestion")
+router.use("/suggestion", SuggestionRoute)
+
 module.exports = router

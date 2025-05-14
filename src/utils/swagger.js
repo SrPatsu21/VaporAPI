@@ -29,6 +29,9 @@ const options = {
                 name: 'Tag'
             },
             {
+                name: 'Suggestion'
+            },
+            {
                 name: 'Image',
                 description: 'AVOID USING THIS ENDPOINT!',
             },

@@ -67,9 +67,9 @@ const searchTag = async (req, res, next) => {
         query.deleted = false
         if (deleted) query.deleted = deleted;
 
-        let limited = 100;
+        let limited = 1000;
         if(limit){
-            if (limit > 100) limited = limit;
+            if (limit < 1000) limited = limit;
         }
         let skiped = 0;
         if(skip) skiped = skip;

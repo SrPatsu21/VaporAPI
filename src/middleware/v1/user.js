@@ -235,9 +235,10 @@ const searchUser = async (req, res, next) => {
         if (username) query.username = username;
         if (isAdmin) query.isAdmin = isAdmin;
         if (deleted) query.deleted = deleted;
+
         let limited = 1000;
         if(limit){
-            if (limit > 1000) limited = limit;
+            if (limit < 1000) limited = limit;
         }
         let skiped = 0;
         if(skip) skiped = skip;
