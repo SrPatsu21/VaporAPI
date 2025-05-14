@@ -11,9 +11,11 @@ const createCategory = async (req, res, next) => {
     try {
         const { categorySTR } = req.body;
 
-        const category = new Categories({
-            categorySTR
-        });
+        const exist = await Categories.findOne({ categorySTR });
+
+        if (exist) {
+            return res.status(400).json({ error: 'category already exists' });
+        }
 
         await category.save();
 
@@ -45,16 +47,23 @@ const getCategory = async (req, res, next) => {
 */
 const updateCategory = async (req, res, next) => {
     try {
-        if (!req.body.categorySTR) {
+        const { categorySTR } = req.body;
+        if (!categorySTR) {
             return res.status(400).json({
                 error: "categorySTR is required."
             });
         }
 
+        const exist = await Categories.findOne({ categorySTR });
+
+        if (exist) {
+            return res.status(400).json({ error: 'category already exists' });
+        }
+
         const id = req.params.id;
 
         const updates = {}
-        updates.categorySTR = req.body.categorySTR;
+        updates.categorySTR = categorySTR;
 
         const updated = await Categories.findByIdAndUpdate(
             id,

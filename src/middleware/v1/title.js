@@ -9,6 +9,12 @@ const createTitle = async (req, res, next) => {
         ? tags.split(',').map(t => t.trim()).filter(Boolean)
         : Array.isArray(tags) ? tags : [];
 
+        const exist = await Titles.findOne({ titleSTR, category });
+
+        if (exist) {
+            return res.status(400).json({ error: 'Title with this name already exists' });
+        }
+
         const newTitle = new Titles({
             titleSTR,
             category,
@@ -43,6 +49,12 @@ const updateTitle = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { titleSTR, category, tags, imageURL } = req.body;
+
+        const exist = await Titles.findOne({ titleSTR, category });
+
+        if (exist) {
+            return res.status(400).json({ error: 'Title with this name already exists' });
+        }
 
         const update = { titleSTR, category, tags, imageURL };
 

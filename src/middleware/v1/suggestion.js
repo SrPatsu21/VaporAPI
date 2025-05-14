@@ -56,6 +56,12 @@ const createSuggestion = async (req, res, next) => {
             res.status(400).json({ error: 'refersto must be one of: (title, tag, category)' });
         }
 
+        const exist = await Suggestions.findOne({ name, refersto });
+
+        if (exist) {
+            return res.status(400).json({ error: 'Suggestion with this name already exists' });
+        }
+
         const suggestion = new Suggestions({
             name,
             description,
@@ -116,6 +122,12 @@ const updateSuggestion = async (req, res, next) => {
             res.status(400).json({ error: 'refersto must be one of: (title, tag, category)' });
         }
 
+        const exist = await Suggestions.findOne({ name, refersto });
+
+        if (exist) {
+            return res.status(400).json({ error: 'Suggestion with this name already exists' });
+        }
+
         const update = { name,
                 name,
                 description,
@@ -124,42 +136,6 @@ const updateSuggestion = async (req, res, next) => {
             }
 
         const updatedSuggestion = await Suggestions.findByIdAndUpdate(id, update, {
-            new: true,
-        })
-
-        if (!updatedSuggestion) {
-            return res.status(404).json({ message: 'Suggestion not found' });
-        }
-
-        req.updatedSuggestion = updatedSuggestion;
-        next();
-    } catch (err) {
-        next(err);
-    }
-};
-
-//! OWNER ONLY
-/*
-{
-    "refersto": "enum ['title', 'tag', 'category']"
-    "name": "name",
-    "description": "description",
-}
-*/
-const patchSuggestion = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        const updates = {};
-
-        updates.refersto = req.body.refersto
-        updates.name = req.body.name
-        updates.description = req.body.description
-
-        if (updates.refersto && !['title', 'tag', 'category'].includes(updates.refersto)) {
-            res.status(400).json({ error: 'refersto must be one of: (title, tag, category)' });
-        }
-
-        const updatedSuggestion = await Suggestions.findByIdAndUpdate(id, updates, {
             new: true,
         })
 
@@ -231,7 +207,6 @@ module.exports = {
     createSuggestion,
     getSuggestion,
     updateSuggestion,
-    patchSuggestion,
     searchSuggestion,
     deleteSuggestion,
 };

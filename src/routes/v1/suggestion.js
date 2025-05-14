@@ -6,7 +6,6 @@ const {
     createSuggestion,
     getSuggestion,
     updateSuggestion,
-    patchSuggestion,
     searchSuggestion,
     deleteSuggestion,
 } = require('../../middleware/v1/suggestion.js');
@@ -145,46 +144,6 @@ router.get('/:id', getSuggestion, (req, res) => {
  *         description: Bad request
  */
 router.put('/:id', authenticate, isOwner, updateSuggestion, (req, res) => {
-    try {
-        res.status(200).json(req.updatedSuggestion);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-/**
- * @swagger
- * /api/v1/suggestion/{id}:
- *   patch:
- *     summary: Partially update a suggestion (Owner)
- *     tags: [Suggestion]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               refersto:
- *                 type: string
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *     responses:
- *       200:
- *         description: Suggestion updated
- *       400:
- *         description: Bad request
- */
-router.patch('/:id', authenticate, isOwner, patchSuggestion, (req, res) => {
     try {
         res.status(200).json(req.updatedSuggestion);
     } catch (error) {

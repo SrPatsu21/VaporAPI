@@ -5,6 +5,12 @@ const createTag = async (req, res, next) => {
     try {
         const { tagSTR } = req.body;
 
+        const exist = await Tags.findOne({ tagSTR });
+
+        if (exist) {
+            return res.status(400).json({ error: 'Tag with this name already exists' });
+        }
+
         const tag = new Tags({
             tagSTR
         });
@@ -34,16 +40,24 @@ const getTag = async (req, res, next) => {
 //! ADMIN ONLY
 const updateTag = async (req, res, next) => {
     try {
-        if (!req.body.tagSTR) {
+        const { tagSTR } = req.body;
+
+        if (!tagSTR) {
             return res.status(400).json({
                 error: "tagSTR is required."
             });
         }
 
+        const exist = await Tags.findOne({ tagSTR });
+
+        if (exist) {
+            return res.status(400).json({ error: 'Tags with this name already exists' });
+        }
+
         const id = req.params.id;
 
         const updates = {}
-        updates.tagSTR = req.body.tagSTR;
+        updates.tagSTR = tagSTR;
 
         const updated = await Tags.findByIdAndUpdate(
             id,

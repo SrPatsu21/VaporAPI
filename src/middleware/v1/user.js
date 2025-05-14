@@ -26,6 +26,12 @@ const createUser = async (req, res, next) => {
     try {
         const { username, email, password, passwordConfirm} = req.body;
 
+        const exist = await Users.findOne({ username });
+
+        if (exist) {
+            return res.status(400).json({ error: 'User with this username already exists' });
+        }
+
         if(password != passwordConfirm) return res.status(400).json({ message: 'The new password and confirmation do not match' });
 
         if(!isSafePassword(password)) return res.status(400).json({ message: 'The new password need: minimum 8 characters; at least one lowercase, uppercase, digit and special char (not allowed:($, .))' });
@@ -86,6 +92,12 @@ const updateUser = async (req, res, next) => {
             });
         }
 
+        const exist = await Users.findOne({ username });
+
+        if (exist) {
+            return res.status(400).json({ error: 'User with this username already exists' });
+        }
+
         const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
         if (!emailValidator.test(req.body.email)) {
             return res.status(400).json({ message: `${req.body.email} is not a valid email!` });
@@ -125,6 +137,14 @@ const patchUser = async (req, res, next) => {
         const updates = {}
         updates.username = req.body.username;
         updates.email = req.body.email;
+
+        if(updates.username){
+            const exist = await Users.findOne({ username });
+
+            if (exist) {
+                return res.status(400).json({ error: 'User with this username already exists' });
+            }
+        }
 
         if (updates.email){
             const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
