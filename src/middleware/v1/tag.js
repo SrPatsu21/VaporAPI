@@ -63,7 +63,7 @@ const searchTag = async (req, res, next) => {
     try {
         const { tagSTR , deleted, limit, skip } = req.query;
         const query = { };
-        if (tagSTR) query.tagSTR = tagSTR;
+        if (tagSTR) query.tagSTR = { $regex: tagSTR, $options: 'i' };;
         query.deleted = false
         if (deleted) query.deleted = deleted;
 

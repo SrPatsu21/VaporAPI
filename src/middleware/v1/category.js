@@ -1,3 +1,4 @@
+const Category = require('../../models/Category.js');
 const { Categories } = require('../../models/Category.js')
 
 //! ADMIN ONLY
@@ -78,12 +79,12 @@ const searchCategory = async (req, res, next) => {
     try {
         const { categorySTR, deleted, limit, skip } = req.query;
         const query = { };
-        if (categorySTR) query.categorySTR = categorySTR;
+        if (categorySTR) query.categorySTR = { $regex: categorySTR, $options: 'i' };;
         query.deleted = false
         if (deleted) query.deleted = deleted;
-        let limited = 100;
+        let limited = 1000;
         if(limit){
-            if (limit > 100) limited = limit;
+            if (limit > 1000) limited = limit;
         }
         let skiped = 0;
         if(skip) skiped = skip;

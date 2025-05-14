@@ -71,14 +71,21 @@ const searchTitle = async (req, res, next) => {
         if (deleted) query.deleted = deleted;
         else query.deleted = false;
 
-        let limited = 100;
+        let limited = 1000;
         if(limit){
-            if (limit < 100) limited = limit;
+            if (limit < 1000) limited = limit;
         }
         const sk = skip ? Number(skip) : 0;
 
         const foundTitles = await Titles.find(query)
-            .populate('category tags')
+            .populate({
+                path: 'tags',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'category',
+                select: '-deleted -__v -createdAt -updatedAt'
+            })
             .limit(parseInt(limited))
             .skip(parseInt(sk))
             .select("-createdAt -updatedAt -__v");

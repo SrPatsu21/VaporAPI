@@ -97,7 +97,7 @@ const searchImage = async (req, res, next) => {
     try {
         const { filename, limit, skip } = req.query;
         const query = { };
-        if (filename) query.filename = filename;
+        if (filename) query.filename = { $regex: filename, $options: 'i' };;
         let limited = 25;
         if(limit){
             if (limit > 25) limited = limit;

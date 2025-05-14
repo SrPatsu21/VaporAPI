@@ -231,8 +231,8 @@ const searchUser = async (req, res, next) => {
     try {
         const { email, username, isAdmin, deleted, limit, skip} = req.query;
         const query = { deleted: false };
-        if (email) query.email = email;
-        if (username) query.username = username;
+        if (email) query.email = { $regex: email, $options: 'i' };
+        if (username) query.username = { $regex: username, $options: 'i' };
         if (isAdmin) query.isAdmin = isAdmin;
         if (deleted) query.deleted = deleted;
 

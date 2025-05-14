@@ -244,7 +244,7 @@ const patchProduct = async (req, res, next) => {
 /**
  * Search products.
  * Query params supported:
- *  - name (exact match)
+ *  - name
  *  - owner
  *  - title
  *  - minDownloads (Number)
@@ -258,7 +258,7 @@ const searchProduct = async (req, res, next) => {
         const { name, owner, title, deleted, limit, skip } = req.query;
         const query = {};
 
-        if (name) query.name = name;
+        if (name) query.name = { $regex: name, $options: 'i' };
         if (owner) query.owner = owner;
         if (title) query.title = title;
 
