@@ -39,8 +39,7 @@ const options = {
                 description: 'AVOID USING THIS ENDPOINT!',
             },
             {
-                name: 'debug',
-                description: 'REMOVE THIS ENDPOINT!',
+                name: 'Admin'
             }
         ],
         servers: [

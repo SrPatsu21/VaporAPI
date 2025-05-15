@@ -31,4 +31,7 @@ router.use("/suggestion", SuggestionRoute)
 const ReviewRoute = require("./review")
 router.use("/review", ReviewRoute)
 
+const AdminRoute = require("./admin")
+router.use("/admin", AdminRoute)
+
 module.exports = router
