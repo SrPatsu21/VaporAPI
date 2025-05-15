@@ -28,4 +28,7 @@ router.use("/image", imageRoute)
 const SuggestionRoute = require("./suggestion")
 router.use("/suggestion", SuggestionRoute)
 
+const ReviewRoute = require("./review")
+router.use("/review", ReviewRoute)
+
 module.exports = router

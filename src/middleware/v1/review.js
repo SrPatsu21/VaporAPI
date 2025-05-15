@@ -48,7 +48,7 @@ const createReview = async (req, res, next) => {
             return res.status(400).json({ error: 'score and product are required.' });
         }
 
-        if (score <= 0 || score >= 10) {
+        if (score < 0 || score > 10) {
             return res.status(400).json({ error: 'score must be between 0 and 10.' });
         }
 
@@ -71,7 +71,7 @@ const createReview = async (req, res, next) => {
 const getReview = async (req, res, next) => {
     try {
         const review = await Reviews.findById(req.params.id)
-            .select('-__v -updatedAt')
+            .select('-__v ')
             .populate({
                 path: 'owner',
                 select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
@@ -91,11 +91,17 @@ const getReview = async (req, res, next) => {
 };
 
 //!Owner only
+/*
+{
+    "score": "number",
+    "description": "string",
+}
+ */
 const updateReview = async (req, res, next) => {
     try {
         const { score, description } = req.body;
 
-        if (score !== undefined && (score <= 0 || score >= 10)) {
+        if (score !== undefined && (score < 0 || score > 10)) {
             return res.status(400).json({ error: 'score must be between 0 and 10.' });
         }
 
@@ -116,21 +122,34 @@ const updateReview = async (req, res, next) => {
 
 const searchReview = async (req, res, next) => {
     try {
-        const { score, owner, product, limit = 1000, skip = 0 } = req.query;
-        const query = { deleted: false };
+        const { score, owner, product, limit, skip } = req.query;
+        const query = { };
 
         if (score) query.score = score;
         if (owner) query.owner = owner;
         if (product) query.product = product;
 
-        const reviews = await Reviews.find(query)
-            .limit(parseInt(limit))
-            .skip(parseInt(skip))
-            .select('-__v -createdAt -updatedAt')
-            .populate('owner', '-password -email -__v')
-            .populate('product', '-__v');
+        let limited = 1000;
+        if(limit){
+            if (limit < 1000) limited = limit;
+        }
+        let skiped = 0;
+        if(skip) skiped = skip;
 
-        req.foundReviews = reviews;
+        const foundReviews = await Reviews.find(query)
+            .limit(limited)
+            .skip(skiped)
+            .select('-__v ')
+            .populate({
+                path: 'owner',
+                select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'product',
+                select: '-description -magnetLink -othersUrl -title -tags -owner -version -deleted -__v -createdAt -updatedAt'
+            });
+
+        req.foundReviews = foundReviews;
         next();
     } catch (err) {
         next(err);
@@ -150,6 +169,34 @@ const deleteReview = async (req, res, next) => {
     }
 };
 
+const getLatestReviewsForProduct = async (req, res, next) => {
+    try {
+        const productId = req.params.productId;
+
+        if (!productId) {
+            return res.status(400).json({ message: 'productId is required in the route params.' });
+        }
+
+        const reviews = await Reviews.find({ product: productId })
+            .sort({ createdAt: -1 })  // Most recent first
+            .limit(25)
+            .select(' -__v ')
+            .populate({
+                path: 'owner',
+                select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
+            })
+            .populate({
+                path: 'product',
+                select: '-description -magnetLink -othersUrl -title -tags -owner -version -deleted -__v -createdAt -updatedAt'
+            });
+
+        req.latestReviews = reviews;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     isReviewOwner,
     isReviewOwnerOrAdmin,
@@ -158,4 +205,5 @@ module.exports = {
     updateReview,
     searchReview,
     deleteReview,
+    getLatestReviewsForProduct,
 };

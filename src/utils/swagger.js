@@ -29,6 +29,9 @@ const options = {
                 name: 'Tag'
             },
             {
+                name: 'Review'
+            },
+            {
                 name: 'Suggestion'
             },
             {
