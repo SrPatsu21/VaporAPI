@@ -24,7 +24,7 @@ In the first run, you will need to run the chmod to make the script executable.
 chmod +x ./mongo-cluster/*.sh
 ```
 
-Now you can run the docker compouse
+Now you can run the docker compose
 
 ```bash
 docker compose -f ./docker-compose.db.yml up -d
@@ -48,6 +48,20 @@ openssl req -x509 -nodes -days 365 \
   -subj "/CN=localhost"
 ```
 
+#### Change from data from DB
+
+Connect to DB
+```
+docker exec -it mongos-router0 mongosh
+```
+
+If you want to modify a normal user to be admin
+```
+db.Users.findOneAndUpdate(
+  { _id: ObjectId("PUT_USER_ID_HERE") },
+  { $set: { isAdmin: true } }
+)
+```
 #### Create User and Database
 
 ##### **You don't need to do anything here, the previous script do this for you, do this just in case you are deploying this api.**
