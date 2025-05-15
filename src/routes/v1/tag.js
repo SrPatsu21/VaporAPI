@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * /api/v1/tag:
  *   post:
- *     summary: Create a new tag
+ *     summary: Create a new tag (Admin only)
  *     tags: [Tag]
  *     security:
  *       - bearerAuth: []
@@ -111,7 +111,7 @@ router.get("/:id", getTag, async (req, res) => {
  * @swagger
  * /api/v1/tag/{id}:
  *   put:
- *     summary: Update an existing tag
+ *     summary: Update an existing tag (Admin only)
  *     tags: [Tag]
  *     security:
  *       - bearerAuth: []
@@ -228,7 +228,7 @@ router.get("", searchTag, async (req, res) => {
  * @swagger
  * /api/v1/tag/{id}:
  *   delete:
- *     summary: Soft Delete a tag
+ *     summary: Soft Delete a tag (Admin only)
  *     tags: [Tag]
  *     security:
  *       - bearerAuth: []

@@ -86,7 +86,8 @@ const getUser = async (req, res, next) => {
 */
 const updateUser = async (req, res, next) => {
     try {
-        if (!req.body.username || !req.body.email) {
+        const { username, email} = req.body;
+        if (!username || !email) {
             return res.status(400).json({
                 error: "Username and email are required."
             });
@@ -94,19 +95,19 @@ const updateUser = async (req, res, next) => {
 
         const exist = await Users.findOne({ username });
 
-        if (exist) {
+        if (exist._id == req.user._id) {
             return res.status(400).json({ error: 'User with this username already exists' });
         }
 
         const emailValidator = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-        if (!emailValidator.test(req.body.email)) {
-            return res.status(400).json({ message: `${req.body.email} is not a valid email!` });
+        if (!emailValidator.test(email)) {
+            return res.status(400).json({ message: `${email} is not a valid email!` });
         }
 
         const id = req.params.id;
         const updates = {}
-        updates.username = req.body.username;
-        updates.email = req.body.email;
+        updates.username = username;
+        updates.email = email;
 
         const updated = await Users.findByIdAndUpdate(
             id,
@@ -271,24 +272,6 @@ const searchUser = async (req, res, next) => {
     }
 };
 
-//! ADMIN ONLY
-// TODO resolve dependencies
-const deleteUser = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        const deleted = await Users.findByIdAndDelete(id);
-        if (!deleted) return res.status(404).json({ message: "User not found" });
-
-        // remove password field
-        deleted.password = undefined;
-
-        req.deletedUser = deleted;
-        next();
-    } catch (err) {
-        next(err);
-    }
-};
-
 const adminControler = async (req, res, next) => {
     try {
         const id = req.params.id;
@@ -315,7 +298,6 @@ module.exports = {
     changePassword,
     softDeleteUser,
     restoreUser,
-    deleteUser,
     getUser,
     searchUser,
     authorizeSelf,

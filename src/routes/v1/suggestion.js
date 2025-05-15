@@ -36,6 +36,40 @@ const router = express.Router();
  *     responses:
  *       201:
  *         description: Suggestion successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 refersto:
+ *                   type: string
+ *                   enum:
+ *                     - title
+ *                     - tag
+ *                     - category
+ *                   description: Must be one of 'title', 'tag', or 'category'
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the user who created the suggestion
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  */
@@ -73,6 +107,40 @@ router.post('/', authenticate, createSuggestion, (req, res) => {
  *     responses:
  *       200:
  *         description: List of suggestions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     format: uuid
+ *                     description: Must be an ObjectId and is required
+ *                   refersto:
+ *                     type: string
+ *                     enum:
+ *                       - title
+ *                       - tag
+ *                       - category
+ *                     description: Must be one of 'title', 'tag', or 'category'
+ *                   name:
+ *                     type: string
+ *                     description: Must be a string and is required
+ *                   description:
+ *                     type: string
+ *                     description: Must be a string
+ *                   owner:
+ *                     type: object
+ *                     description: User object
+ *                     properties:
+ *                        _id:
+ *                           type: string
+ *                           format: uuid
+ *                           description: Must be an ObjectId and is required
+ *                        usermane:
+ *                            type: string
  *       400:
  *         description: Bad request
  */
@@ -99,6 +167,40 @@ router.get('/', searchSuggestion, (req, res) => {
  *     responses:
  *       200:
  *         description: Suggestion found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 refersto:
+ *                   type: string
+ *                   enum:
+ *                     - title
+ *                     - tag
+ *                     - category
+ *                   description: Must be one of 'title', 'tag', or 'category'
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the user who created the suggestion
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  */
@@ -114,7 +216,7 @@ router.get('/:id', getSuggestion, (req, res) => {
  * @swagger
  * /api/v1/suggestion/{id}:
  *   put:
- *     summary: Update a suggestion (Owner)
+ *     summary: Update a suggestion (Owner Only)
  *     tags: [Suggestion]
  *     security:
  *       - bearerAuth: []
@@ -140,6 +242,40 @@ router.get('/:id', getSuggestion, (req, res) => {
  *     responses:
  *       200:
  *         description: Suggestion updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 refersto:
+ *                   type: string
+ *                   enum:
+ *                     - title
+ *                     - tag
+ *                     - category
+ *                   description: Must be one of 'title', 'tag', or 'category'
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the user who created the suggestion
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  */
@@ -168,6 +304,40 @@ router.put('/:id', authenticate, isOwner, updateSuggestion, (req, res) => {
  *     responses:
  *       200:
  *         description: Suggestion deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 refersto:
+ *                   type: string
+ *                   enum:
+ *                     - title
+ *                     - tag
+ *                     - category
+ *                   description: Must be one of 'title', 'tag', or 'category'
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the user who created the suggestion
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  */

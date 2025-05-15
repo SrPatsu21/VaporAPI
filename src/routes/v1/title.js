@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * /api/v1/title:
  *   post:
- *     summary: Create a new title
+ *     summary: Create a new title (admin only)
  *     tags: [Title]
  *     security:
  *       - bearerAuth: []
@@ -35,6 +35,43 @@ const router = express.Router();
  *     responses:
  *       201:
  *         description: Title successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 titleSTR:
+ *                   type: string
+ *                   maxLength: 256
+ *                   description: Must be a string and is required
+ *                 category:
+ *                   type: string
+ *                   description: ObjectId reference to a Category
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   default: false
+ *                   description: Indicates if the title is deactivated
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  *       401:
@@ -67,6 +104,45 @@ router.post("", authenticate, isAdmin, createTitle, async (req, res) => {
  *     responses:
  *       200:
  *         description: Title found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 titleSTR:
+ *                   type: string
+ *                   maxLength: 256
+ *                   description: Must be a string and is required
+ *                 category:
+ *                   type: string
+ *                   description: ObjectId reference to a Category
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   default: false
+ *                   description: Indicates if the title is deactivated
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
+ *       400:
+ *         description: Bad request
  *       404:
  *         description: Title not found
  *       500:
@@ -84,7 +160,7 @@ router.get("/:id", getTitle, async (req, res) => {
  * @swagger
  * /api/v1/title/{id}:
  *   put:
- *     summary: Update a title
+ *     summary: Update a title (Admin only)
  *     tags: [Title]
  *     security:
  *       - bearerAuth: []
@@ -114,6 +190,43 @@ router.get("/:id", getTitle, async (req, res) => {
  *     responses:
  *       200:
  *         description: Title successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 titleSTR:
+ *                   type: string
+ *                   maxLength: 256
+ *                   description: Must be a string and is required
+ *                 category:
+ *                   type: string
+ *                   description: ObjectId reference to a Category
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   default: false
+ *                   description: Indicates if the title is deactivated
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Invalid input
  *       401:
@@ -164,6 +277,35 @@ router.put("/:id", authenticate, isAdmin, updateTitle, async (req, res) => {
  *     responses:
  *       200:
  *         description: List of titles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     format: uuid
+ *                     description: Must be an ObjectId and is required
+ *                   titleSTR:
+ *                     type: string
+ *                     maxLength: 256
+ *                     description: Must be a string and is required
+ *                   category:
+ *                     type: string
+ *                     description: ObjectId reference to a Category
+ *                   tags:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Array of ObjectId references to Tags
+ *                   imageURL:
+ *                     type: string
+ *                     maxLength: 512
+ *                     description: Must be a string and is required
+ *       400:
+ *         description: Bad request
  *       500:
  *         description: Server error
  */
@@ -179,7 +321,7 @@ router.get("", searchTitle, async (req, res) => {
  * @swagger
  * /api/v1/title/{id}:
  *   delete:
- *     summary: Soft Delete a title
+ *     summary: Soft Delete a title (Admin only)
  *     tags: [Title]
  *     security:
  *       - bearerAuth: []
@@ -192,6 +334,45 @@ router.get("", searchTitle, async (req, res) => {
  *     responses:
  *       200:
  *         description: Title successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 titleSTR:
+ *                   type: string
+ *                   maxLength: 256
+ *                   description: Must be a string and is required
+ *                 category:
+ *                   type: string
+ *                   description: ObjectId reference to a Category
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   default: false
+ *                   description: Indicates if the title is deactivated
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
+ *       400:
+ *         description: Bad request
  *       401:
  *         description: Unauthorized
  *       403:

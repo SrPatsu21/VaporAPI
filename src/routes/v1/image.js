@@ -15,7 +15,7 @@ const router = express.Router();
  * @swagger
  * /api/v1/image:
  *   post:
- *     summary: Upload a new image
+ *     summary: Upload a new image (Admin only)
  *     tags: [Image]
  *     security:
  *       - bearerAuth: []
@@ -125,6 +125,24 @@ router.get('/:id', getImage, (req, res) => {
  *           application/json:
  *             schema:
  *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 filename:
+ *                   type: string
+ *                   description: Name of the image file
+ *                 contentType:
+ *                   type: string
+ *                   description: MIME type of the image
+ *                 base64:
+ *                   type: string
+ *                   description: Base64 encoded image data
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Creation timestamp
  *       401:
  *         description: Unauthorized
  *       403:
@@ -163,13 +181,30 @@ router.get('/fulldate/:id', authenticate, isAdmin, getImageFullInfo, (req, res) 
  *           type: integer
  *     responses:
  *       200:
- *         description: List of images
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
  *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     format: uuid
+ *                     description: Must be an ObjectId and is required
+ *                   filename:
+ *                     type: string
+ *                     description: Name of the image file
+ *                   contentType:
+ *                     type: string
+ *                     description: MIME type of the image
+ *                   base64:
+ *                     type: string
+ *                     description: Base64 encoded image data
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Creation timestamp
  *       401:
  *         description: Unauthorized
  *       403:
@@ -201,6 +236,28 @@ router.get('', authenticate, isAdmin, searchImage, (req, res) => {
  *     responses:
  *       200:
  *         description: Image deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 filename:
+ *                   type: string
+ *                   description: Name of the image file
+ *                 contentType:
+ *                   type: string
+ *                   description: MIME type of the image
+ *                 base64:
+ *                   type: string
+ *                   description: Base64 encoded image data
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Creation timestamp
  *       401:
  *         description: Unauthorized
  *       403:

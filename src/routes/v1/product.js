@@ -51,6 +51,61 @@ const router = express.Router();
  *     responses:
  *       201:
  *         description: Product successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string
+ *                 magnetLink:
+ *                   type: string
+ *                   description: Must be a string and a magnet link
+ *                 othersUrl:
+ *                   type: array
+ *                   description: A list of related URLs for the product
+ *                   items:
+ *                     type: string
+ *                 title:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to a Title
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the product owner
+ *                 version:
+ *                   type: string
+ *                   maxLength: 40
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   description: Indicates if the product is deleted
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  *       401:
@@ -106,10 +161,58 @@ router.post("/", authenticate, createProduct, (req, res) => {
  *     responses:
  *       200:
  *         description: List of products
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     format: uuid
+ *                     description: Must be an ObjectId and is required
+ *                   name:
+ *                     type: string
+ *                     description: Must be a string and is required
+ *                   description:
+ *                     type: string
+ *                     description: Must be a string
+ *                   imageURL:
+ *                     type: string
+ *                     maxLength: 512
+ *                     description: Must be a string
+ *                   magnetLink:
+ *                     type: string
+ *                     description: Must be a string and a magnet link
+ *                   othersUrl:
+ *                     type: array
+ *                     description: A list of related URLs for the product
+ *                     items:
+ *                       type: string
+ *                   title:
+ *                     type: string
+ *                     format: uuid
+ *                     description: ObjectId reference to a Title
+ *                   tags:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Array of ObjectId references to Tags
+ *                   owner:
+ *                     type: string
+ *                     format: uuid
+ *                     description: ObjectId reference to the product owner
+ *                   version:
+ *                     type: string
+ *                     maxLength: 40
+ *                     description: Must be a string and is required
+ *       400:
+ *         description: Invalid input
  *       500:
  *         description: Server error
  */
-router.get("/", searchProduct, (req, res) => {
+router.get("", searchProduct, (req, res) => {
     try {
         res.status(200).json(req.foundProducts);
     } catch (error) {
@@ -132,6 +235,63 @@ router.get("/", searchProduct, (req, res) => {
  *     responses:
  *       200:
  *         description: Product found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string
+ *                 magnetLink:
+ *                   type: string
+ *                   description: Must be a string and a magnet link
+ *                 othersUrl:
+ *                   type: array
+ *                   description: A list of related URLs for the product
+ *                   items:
+ *                     type: string
+ *                 title:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to a Title
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the product owner
+ *                 version:
+ *                   type: string
+ *                   maxLength: 40
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   description: Indicates if the product is deleted
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
+ *       400:
+ *         description: Invalid input
  *       404:
  *         description: Product not found
  */
@@ -187,6 +347,61 @@ router.get("/:id", getProduct, (req, res) => {
  *     responses:
  *       200:
  *         description: Product successfully updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string
+ *                 magnetLink:
+ *                   type: string
+ *                   description: Must be a string and a magnet link
+ *                 othersUrl:
+ *                   type: array
+ *                   description: A list of related URLs for the product
+ *                   items:
+ *                     type: string
+ *                 title:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to a Title
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the product owner
+ *                 version:
+ *                   type: string
+ *                   maxLength: 40
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   description: Indicates if the product is deleted
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Bad request
  *       403:
@@ -245,6 +460,61 @@ router.put("/:id", authenticate, isOwner, updateProduct, (req, res) => {
  *     responses:
  *       200:
  *         description: Product updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string
+ *                 magnetLink:
+ *                   type: string
+ *                   description: Must be a string and a magnet link
+ *                 othersUrl:
+ *                   type: array
+ *                   description: A list of related URLs for the product
+ *                   items:
+ *                     type: string
+ *                 title:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to a Title
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the product owner
+ *                 version:
+ *                   type: string
+ *                   maxLength: 40
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   description: Indicates if the product is deleted
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
  *       400:
  *         description: Invalid input
  *       403:
@@ -277,6 +547,63 @@ router.patch("/:id", authenticate, isOwner, patchProduct, (req, res) => {
  *     responses:
  *       200:
  *         description: Product successfully deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string
+ *                 magnetLink:
+ *                   type: string
+ *                   description: Must be a string and a magnet link
+ *                 othersUrl:
+ *                   type: array
+ *                   description: A list of related URLs for the product
+ *                   items:
+ *                     type: string
+ *                 title:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to a Title
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the product owner
+ *                 version:
+ *                   type: string
+ *                   maxLength: 40
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   description: Indicates if the product is deleted
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
+ *       400:
+ *         description: Invalid input
  *       403:
  *         description: Forbidden
  *       404:
@@ -307,6 +634,63 @@ router.delete("/:id", authenticate, isOwner, deleteProduct, (req, res) => {
  *     responses:
  *       200:
  *         description: Product restored successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   format: uuid
+ *                   description: Must be an ObjectId and is required
+ *                 name:
+ *                   type: string
+ *                   description: Must be a string and is required
+ *                 description:
+ *                   type: string
+ *                   description: Must be a string
+ *                 imageURL:
+ *                   type: string
+ *                   maxLength: 512
+ *                   description: Must be a string
+ *                 magnetLink:
+ *                   type: string
+ *                   description: Must be a string and a magnet link
+ *                 othersUrl:
+ *                   type: array
+ *                   description: A list of related URLs for the product
+ *                   items:
+ *                     type: string
+ *                 title:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to a Title
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   description: Array of ObjectId references to Tags
+ *                 owner:
+ *                   type: string
+ *                   format: uuid
+ *                   description: ObjectId reference to the product owner
+ *                 version:
+ *                   type: string
+ *                   maxLength: 40
+ *                   description: Must be a string and is required
+ *                 deleted:
+ *                   type: boolean
+ *                   description: Indicates if the product is deleted
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                 __v:
+ *                   type: number
+ *       400:
+ *         description: Invalid input
  *       403:
  *         description: Forbidden
  *       404:

@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * /api/v1/category:
  *   post:
- *     summary: Create a new category
+ *     summary: Create a new category (Admin only)
  *     tags: [Category]
  *     security:
  *       - bearerAuth: []
@@ -109,7 +109,7 @@ router.get("/:id", getCategory, async (req, res) => {
  * @swagger
  * /api/v1/category/{id}:
  *   put:
- *     summary: Update a category
+ *     summary: Update a category (Admin only)
  *     tags: [Category]
  *     security:
  *       - bearerAuth: []
@@ -226,7 +226,7 @@ router.get("", searchCategory, async (req, res) => {
  * @swagger
  * /api/v1/category/{id}:
  *   delete:
- *     summary: Soft Delete a category
+ *     summary: Soft Delete a category (Admin only)
  *     tags: [Category]
  *     security:
  *       - bearerAuth: []
