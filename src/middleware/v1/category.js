@@ -1,4 +1,3 @@
-const Category = require('../../models/Category.js');
 const { Categories } = require('../../models/Category.js')
 
 //! ADMIN ONLY
