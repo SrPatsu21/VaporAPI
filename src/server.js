@@ -13,7 +13,7 @@ const forge = require('node-forge');
 const HTTPS_PORT = process.env.PORT || 443;
 const HTTP_PORT = 80;
 const hostname = "localhost";
-const numCPUs = os.cpus().length; // 1 or os.cpus().length for full usage
+const numCPUs = 1; // 1 or os.cpus().length for full usage
 
 //* DB
 const connectDB = require("./db");
