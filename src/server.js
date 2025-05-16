@@ -51,6 +51,8 @@ if (cluster.isMaster) {
 
 } else {
 //* Worker process runs the Express app
+   const app = express();
+
     const app = express();
 
     //* Rate Limiting
@@ -81,16 +83,6 @@ if (cluster.isMaster) {
     app.use(express.json({ limit: "10mb" }));
     app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-    //* Redirect HTTP to HTTPS
-    const redirectApp = express();
-    redirectApp.use((req, res) => {
-        const target = `https://${req.headers.host}${req.url}`;
-        res.redirect(301, target);
-    });
-    http.createServer(redirectApp).listen(HTTP_PORT, () => {
-        console.log(`HTTP redirect server running at http://${hostname}:${HTTP_PORT}`);
-    });
-
     //* DB connection
     connectDB();
 
@@ -105,9 +97,11 @@ if (cluster.isMaster) {
     const swaggerDocs = require('./utils/swagger');
     swaggerDocs(app);
 
-//* Run
-    https.createServer(httpsOptions, app).listen(HTTPS_PORT, () => {
-        console.log(`Worker ${process.pid} running HTTPS at https://${hostname}:${HTTPS_PORT}`);
+
+    // 🔥 Only bind to process.env.PORT (Render expects this)
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Worker ${process.pid} running on port ${PORT}`);
     });
 }
 
