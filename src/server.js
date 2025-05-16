@@ -124,6 +124,12 @@ function generateSelfSignedCert() {
     const certPem = pki.certificateToPem(cert);
     const keyPem = pki.privateKeyToPem(keys.privateKey);
 
+    // Ensure the ./certs folder exists
+    const dir = './certs';
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+
     fs.writeFileSync('./certs/fullchain.pem', certPem);
     fs.writeFileSync('./certs/privkey.pem', keyPem);
 
