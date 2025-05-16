@@ -51,8 +51,6 @@ if (cluster.isMaster) {
 
 } else {
 //* Worker process runs the Express app
-   const app = express();
-
     const app = express();
 
     //* Rate Limiting
