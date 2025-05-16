@@ -54,8 +54,10 @@ if (cluster.isMaster) {
     const app = express();
 
     //* Rate Limiting
+    app.set('trust proxy', 1); // ✅ Required for Render (or any proxy-based hosting)
+
     const apiLimiter = rateLimit({
-        windowMs: 1000, // 1 second
+        windowMs: 1000,
         max: 10,
         standardHeaders: true,
         legacyHeaders: false,
