@@ -7,6 +7,7 @@ const http = require("http");
 const https = require("https");
 const rateLimit = require("express-rate-limit");
 const timeout = require("connect-timeout");
+const forge = require('node-forge');
 
 //* Settings
 const HTTPS_PORT = process.env.PORT || 443;
@@ -18,6 +19,8 @@ const numCPUs = os.cpus().length; // 1 or os.cpus().length for full usage
 const connectDB = require("./db");
 
 //* SSL Certificates (use real certs in production)
+generateSelfSignedCert();
+
 httpsOptions = {
     key: fs.readFileSync(__dirname + "/../certs/privkey.pem"),
     cert: fs.readFileSync(__dirname + "/../certs/fullchain.pem"),
@@ -98,4 +101,31 @@ if (cluster.isMaster) {
     https.createServer(httpsOptions, app).listen(HTTPS_PORT, () => {
         console.log(`Worker ${process.pid} running HTTPS at https://${hostname}:${HTTPS_PORT}`);
     });
+}
+
+function generateSelfSignedCert() {
+    const pki = forge.pki;
+
+    const keys = pki.rsa.generateKeyPair(2048);
+    const cert = pki.createCertificate();
+
+    cert.publicKey = keys.publicKey;
+    cert.serialNumber = '01';
+    cert.validity.notBefore = new Date();
+    cert.validity.notAfter = new Date();
+    cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
+
+    const attrs = [{ name: 'commonName', value: 'localhost' }];
+    cert.setSubject(attrs);
+    cert.setIssuer(attrs);
+
+    cert.sign(keys.privateKey, forge.md.sha256.create());
+
+    const certPem = pki.certificateToPem(cert);
+    const keyPem = pki.privateKeyToPem(keys.privateKey);
+
+    fs.writeFileSync('./certs/fullchain.pem', certPem);
+    fs.writeFileSync('./certs/privkey.pem', keyPem);
+
+    console.log('Self-signed certificate generated successfully!');
 }
