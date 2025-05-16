@@ -1,6 +1,0 @@
-sh.addShard("rs-shard-0/shard0-replica0:27017")
-sh.addShard("rs-shard-0/shard0-replica1:27017")
-sh.addShard("rs-shard-0/shard0-replica2:27017")
-sh.addShard("rs-shard-1/shard1-replica0:27017")
-sh.addShard("rs-shard-1/shard1-replica1:27017")
-sh.addShard("rs-shard-1/shard1-replica2:27017")
