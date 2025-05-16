@@ -19,7 +19,15 @@ const numCPUs = os.cpus().length; // 1 or os.cpus().length for full usage
 const connectDB = require("./db");
 
 //* SSL Certificates (use real certs in production)
-generateSelfSignedCert();
+const certPath = __dirname + '/../certs/fullchain.pem';
+const keyPath = __dirname + '/../certs/privkey.pem';
+
+if (!fs.existsSync(certPath) || !fs.existsSync(keyPath)) {
+    console.log('🔐 SSL certs not found. Generating new self-signed certificates...');
+    generateSelfSignedCert();
+} else {
+    console.log('🔐 SSL certs already exist. Skipping generation.');
+}
 
 httpsOptions = {
     key: fs.readFileSync(__dirname + "/../certs/privkey.pem"),
@@ -124,14 +132,13 @@ function generateSelfSignedCert() {
     const certPem = pki.certificateToPem(cert);
     const keyPem = pki.privateKeyToPem(keys.privateKey);
 
-    // Ensure the ./certs folder exists
-    const dir = './certs';
+    const dir = __dirname + '/../certs';
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
 
-    fs.writeFileSync('./certs/fullchain.pem', certPem);
-    fs.writeFileSync('./certs/privkey.pem', keyPem);
+    fs.writeFileSync(`${dir}/fullchain.pem`, certPem);
+    fs.writeFileSync(`${dir}/privkey.pem`, keyPem);
 
-    console.log('Self-signed certificate generated successfully!');
+    console.log('✅ Self-signed certificate generated successfully!');
 }
