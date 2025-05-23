@@ -3,7 +3,9 @@ const { Titles } = require('../../models/Title.js');
 //! ADMIN ONLY
 const createTitle = async (req, res, next) => {
     try {
-        const { titleSTR, category, tags, imageURL } = req.body;
+        const { titleSTR: rawtitleSTR, category, tags, imageURL } = req.body;
+
+        const titleSTR = rawtitleSTR.toUpperCase();
 
         const tagsArray = typeof tags === 'string'
         ? tags.split(',').map(t => t.trim()).filter(Boolean)
@@ -48,7 +50,9 @@ const getTitle = async (req, res, next) => {
 const updateTitle = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { titleSTR, category, tags, imageURL } = req.body;
+        const { titleSTR: rawtitleSTR, category, tags, imageURL } = req.body;
+
+        const titleSTR = rawtitleSTR.toUpperCase();
 
         const exist = await Titles.findOne({ titleSTR, category });
 

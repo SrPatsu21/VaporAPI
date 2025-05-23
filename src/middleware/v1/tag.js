@@ -3,7 +3,9 @@ const { Tags } = require('../../models/Tag.js')
 //! ADMIN ONLY
 const createTag = async (req, res, next) => {
     try {
-        const { tagSTR } = req.body;
+        const { tagSTR: rawTagSTR } = req.body;
+
+        const tagSTR = rawTagSTR.toLowerCase();
 
         const exist = await Tags.findOne({ tagSTR });
 
@@ -40,7 +42,9 @@ const getTag = async (req, res, next) => {
 //! ADMIN ONLY
 const updateTag = async (req, res, next) => {
     try {
-        const { tagSTR } = req.body;
+        const { tagSTR: rawTagSTR } = req.body;
+
+        const tagSTR = rawTagSTR.toLowerCase();
 
         if (!tagSTR) {
             return res.status(400).json({
