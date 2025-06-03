@@ -1,9 +1,6 @@
 const mongoose = require('mongoose');
 const Titles = require('../../models/Title').Titles;
 const Products = require('../../models/Product').Products;
-const Users = require('../../models/User').Users;
-const Tags = require('../../models/Tag').Tags;
-const Categories = require('../../models/Category').Categories;
 
 const searchByQueryAll = async (req, res, next) => {
     try {
@@ -39,24 +36,12 @@ const searchByQueryAll = async (req, res, next) => {
                         { "tags.tagSTR": regex }
                     ]
                 }
-            }
-        ])
-        .populate({
-            path: 'category',
-            match: { deleted: false },
-            select: 'categorySTR'
-        })
-        .populate({
-            path: 'tags',
-            match: { deleted: false },
-            select: 'tagSTR'
-        })
-        .skip(skipNum)
-        .limit(limitNum)
-        .lean();
+            },
+            { $skip: skipNum },
+            { $limit: limitNum }
+        ]);
 
         req.foundTitles = titles;
-
         const titlesCount = titles.length;
 
         //* Products
@@ -91,22 +76,20 @@ const searchByQueryAll = async (req, res, next) => {
                             { "owner.username": regex }
                         ]
                     }
-                }
-            ])
-            .populate({
-                path: 'tags',
-                match: { deleted: false },
-                select: 'tagSTR'
-            })
-            .populate({
-                path: 'owner',
-                match: { deleted: false },
-                select: 'username'
-            })
-            .skip(skipNum)
-            .limit(remainingLimit)
-            .select('-magnetLink -othersUrl -deleted -__v -createdAt -updatedAt')
-            .lean();
+                },
+                {
+                    $project: {
+                        magnetLink: 0,
+                        othersUrl: 0,
+                        deleted: 0,
+                        __v: 0,
+                        createdAt: 0,
+                        updatedAt: 0
+                    }
+                },
+                { $skip: skipNum },
+                { $limit: remainingLimit }
+            ]);
         }
 
         req.foundProducts = products;
