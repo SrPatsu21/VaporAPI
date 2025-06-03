@@ -8,13 +8,18 @@ const { Categories } = require('../../models/Category.js')
 */
 const createCategory = async (req, res, next) => {
     try {
-        const { categorySTR } = req.body;
+        const { categorySTR: rawCategorySTR } = req.body;
+
+        const categorySTR = rawCategorySTR.toUpperCase();
 
         const exist = await Categories.findOne({ categorySTR });
 
         if (exist) {
             return res.status(400).json({ error: 'category already exists' });
         }
+        const category = new Categories({
+            categorySTR
+        })
 
         await category.save();
 
@@ -46,7 +51,9 @@ const getCategory = async (req, res, next) => {
 */
 const updateCategory = async (req, res, next) => {
     try {
-        const { categorySTR } = req.body;
+        const { categorySTR: rawCategorySTR } = req.body;
+        const categorySTR = rawCategorySTR.toUpperCase();
+
         if (!categorySTR) {
             return res.status(400).json({
                 error: "categorySTR is required."

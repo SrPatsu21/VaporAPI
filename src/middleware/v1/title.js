@@ -3,7 +3,9 @@ const { Titles } = require('../../models/Title.js');
 //! ADMIN ONLY
 const createTitle = async (req, res, next) => {
     try {
-        const { titleSTR, category, tags, imageURL } = req.body;
+        const { titleSTR: rawtitleSTR, category, tags, imageURL } = req.body;
+
+        const titleSTR = rawtitleSTR.toUpperCase();
 
         const tagsArray = typeof tags === 'string'
         ? tags.split(',').map(t => t.trim()).filter(Boolean)
@@ -48,7 +50,9 @@ const getTitle = async (req, res, next) => {
 const updateTitle = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { titleSTR, category, tags, imageURL } = req.body;
+        const { titleSTR: rawtitleSTR, category, tags, imageURL } = req.body;
+
+        const titleSTR = rawtitleSTR.toUpperCase();
 
         const exist = await Titles.findOne({ titleSTR, category });
 
@@ -83,9 +87,9 @@ const searchTitle = async (req, res, next) => {
         if (deleted) query.deleted = deleted;
         else query.deleted = false;
 
-        let limited = 1000;
+        let limited = 100;
         if(limit){
-            if (limit < 1000) limited = limit;
+            if (limit < 100) limited = limit;
         }
         const sk = skip ? Number(skip) : 0;
 
