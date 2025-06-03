@@ -39,7 +39,8 @@ docker exec -it mongos-router0 mongosh /scripts/db-seed-user.js
 ### API cert
 
 Run this command to create a Self-Signed SSL cert:
-```
+
+```bash
 mkdir ./certs
 openssl req -x509 -nodes -days 365 \
   -newkey rsa:2048 \
@@ -51,17 +52,20 @@ openssl req -x509 -nodes -days 365 \
 #### Change from data from DB
 
 Connect to DB
-```
+
+```bash
 docker exec -it mongos-router0 mongosh
 ```
 
 If you want to modify a normal user to be admin
-```
+
+```js
 db.Users.findOneAndUpdate(
   { _id: ObjectId("PUT_USER_ID_HERE") },
   { $set: { isAdmin: true } }
 )
 ```
+
 #### Create User and Database
 
 ##### **You don't need to do anything here, the previous script do this for you, do this just in case you are deploying this api.**
@@ -71,33 +75,44 @@ To connect to the db you will need a user. You can do this connecting to the mon
 ```bash
 docker exec -it mongos-router0 mongosh
 ```
+
 Change and create database
-```shell
+
+```js
 use VaporBase
 ```
+
 Create user for api
-```shell
+
+```js
 db.createUser({
   user: "api_user",
   pwd: "strong_password",
   roles: [{ role: "readWrite", db: "VaporBase" }]
 });
 ```
+
 Enable sharding
-```shell
+
+```js
 sh.enableSharding("VaporBase");
 ```
-```shell
+
+```js
 sh.setBalancerState(true);
 ```
-Configure sharding
-```shell
-sh.shardCollection("VaporBase.Users", { _id: "hashed" })
-sh.shardCollection("VaporBase.Categories", { _id: "hashed" })
-sh.shardCollection("VaporBase.Products", { _id: "hashed" })
-sh.shardCollection("VaporBase.Tags", { _id: "hashed" })
-sh.shardCollection("VaporBase.Titles", { t_id: "hashed" })
 
+Configure sharding
+
+```js
+sh.shardCollection("VaporBase.Users", { _id: "hashed" });
+sh.shardCollection("VaporBase.Categories", { _id: "hashed" });
+sh.shardCollection("VaporBase.Products", { _id: "hashed" });
+sh.shardCollection("VaporBase.Tags", { _id: "hashed" });
+sh.shardCollection("VaporBase.Titles", { _id: "hashed" });
+sh.shardCollection("VaporBase.Images", { _id: "hashed" });
+sh.shardCollection("VaporBase.Suggestions", { _id: "hashed" });
+sh.shardCollection("VaporBase.Reviews", { _id: "hashed" });
 ```
 
   More about roles.

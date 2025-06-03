@@ -139,13 +139,10 @@ router.post("/", authenticate, createProduct, (req, res) => {
  *         schema:
  *           type: string
  *       - in: query
- *         name: minDownloads
+ *         name: tags
  *         schema:
- *           type: integer
- *       - in: query
- *         name: maxDownloads
- *         schema:
- *           type: integer
+ *           type: string
+ *         description: Comma-separated list of tag ObjectIds (e.g., id1,id2,id3)
  *       - in: query
  *         name: deleted
  *         schema:

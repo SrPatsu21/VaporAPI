@@ -1,4 +1,5 @@
 const { Products } = require('../../models/Product.js');
+const mongoose = require('mongoose');
 
 
 const isOwner = async (req, res, next) => {
@@ -247,20 +248,24 @@ const patchProduct = async (req, res, next) => {
  *  - name
  *  - owner
  *  - title
- *  - minDownloads (Number)
- *  - maxDownloads (Number)
+ *  - tags
  *  - deleted (true/false)
  *  - limit
  *  - skip
  */
 const searchProduct = async (req, res, next) => {
     try {
-        const { name, owner, title, deleted, limit, skip } = req.query;
+        const { name, owner, title, deleted, limit, skip, tags } = req.query;
         const query = {};
 
         if (name) query.name = { $regex: name, $options: 'i' };
         if (owner) query.owner = owner;
         if (title) query.title = title;
+
+        if (tags) {
+            const tagIds = tags.split(',').map(id => id.trim()).filter(id => mongoose.isValidObjectId(id)).map(id => mongoose.Types.ObjectId.createFromHexString(id));
+            query.tags = { $all: tagIds };
+        }
 
         // Exclude deleted by default
         query.deleted = deleted === 'true' ? true : false;
