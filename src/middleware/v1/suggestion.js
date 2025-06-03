@@ -165,9 +165,9 @@ const searchSuggestion = async (req, res, next) => {
         if (name) query.name = { $regex: name, $options: 'i' };
         if (owner) query.owner = owner;
 
-        let limited = 1000;
+        let limited = 100;
         if(limit){
-            if (limit < 1000) limited = limit;
+            if (limit < 100) limited = limit;
         }
         let skiped = 0;
         if(skip) skiped = skip;

@@ -87,9 +87,9 @@ const searchTitle = async (req, res, next) => {
         if (deleted) query.deleted = deleted;
         else query.deleted = false;
 
-        let limited = 1000;
+        let limited = 100;
         if(limit){
-            if (limit < 1000) limited = limit;
+            if (limit < 100) limited = limit;
         }
         const sk = skip ? Number(skip) : 0;
 

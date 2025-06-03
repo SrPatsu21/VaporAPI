@@ -31,6 +31,9 @@ router.use("/suggestion", SuggestionRoute)
 const ReviewRoute = require("./review")
 router.use("/review", ReviewRoute)
 
+const OtherSearchsRoute = require("./otherSearchs")
+router.use("/othersearch", OtherSearchsRoute)
+
 const AdminRoute = require("./admin")
 router.use("/admin", AdminRoute)
 
