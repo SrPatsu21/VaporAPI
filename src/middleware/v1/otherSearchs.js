@@ -105,25 +105,32 @@ const searchByTitleAndCategory = async (req, res, next) => {
         const limitNum = Math.min(parseInt(limit), 100);
         const skipNum = parseInt(skip);
 
-        if (!title) {
-            const tagsArray = tags
-                ? tags
-                    .split(',')
-                    .map(id => id.trim())
-                    .filter(id => mongoose.isValidObjectId(id))
-                    .map(id => mongoose.Types.ObjectId(id))
-                : [];
+        // Validações de ObjectId
+        if (title && !mongoose.isValidObjectId(title)) {
+            return res.status(400).json({ error: "Parâmetro 'title' inválido." });
+        }
 
-            const queryTitle = {
-                deleted: false,
-            };
+        if (category && !mongoose.isValidObjectId(category)) {
+            return res.status(400).json({ error: "Parâmetro 'category' inválido." });
+        }
+
+        const tagsArray = tags
+            ? tags
+                .split(',')
+                .map(id => id.trim())
+                .filter(id => mongoose.isValidObjectId(id))
+                .map(id => new mongoose.Types.ObjectId(id))
+            : [];
+
+        if (!title) {
+            const queryTitle = { deleted: false };
 
             if (name) {
                 queryTitle.titleSTR = { $regex: name, $options: 'i' };
             }
 
             if (category) {
-                queryTitle.category = category;
+                queryTitle.category = new mongoose.Types.ObjectId(category);
             }
 
             const aggregationPipeline = [
@@ -165,9 +172,7 @@ const searchByTitleAndCategory = async (req, res, next) => {
             if (titlesCount < limitNum) {
                 const remainingLimit = limitNum - titlesCount;
 
-                const queryProduct = {
-                    deleted: false,
-                };
+                const queryProduct = { deleted: false };
 
                 if (name) {
                     queryProduct.name = { $regex: name, $options: 'i' };
@@ -179,31 +184,24 @@ const searchByTitleAndCategory = async (req, res, next) => {
 
                 const products = await Products.find(queryProduct)
                     .limit(remainingLimit)
-                    .skip(Math.max(0, skipNum - titlesCount)) // adjust skip to remaining space
+                    .skip(Math.max(0, skipNum - titlesCount))
                     .select('_id name imageURL');
 
                 req.foundProducts = products;
             }
         } else {
-            const query = {
-                deleted: false,
-            };
+            const query = { deleted: false };
 
             if (name) {
                 query.name = { $regex: name, $options: 'i' };
             }
 
             if (title) {
-                query.title = title;
+                query.title = new mongoose.Types.ObjectId(title);
             }
 
-            if (tags) {
-                const tagIds = tags
-                    .split(',')
-                    .map(id => id.trim())
-                    .filter(id => mongoose.isValidObjectId(id))
-                    .map(id => mongoose.Types.ObjectId(id));
-                query.tags = { $all: tagIds };
+            if (tagsArray.length > 0) {
+                query.tags = { $all: tagsArray };
             }
 
             const products = await Products.find(query)
@@ -216,11 +214,10 @@ const searchByTitleAndCategory = async (req, res, next) => {
 
         next();
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error in searchByTitleAndCategory:", error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
-
 
 module.exports = {
     searchByQueryAll,
