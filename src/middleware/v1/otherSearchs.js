@@ -100,93 +100,129 @@ const searchByQueryAll = async (req, res, next) => {
 };
 
 const searchByTitleAndCategory = async (req, res, next) => {
-    const { name, category, title, tags, limit, skip } = req.query;
-    const limitNum = Math.min(parseInt(limit), 100);
-    const skipNum = parseInt(skip);
-    const tagsArray = tags ? tags.split(',').map(id => id.trim()).filter(id => mongoose.isValidObjectId(id)).map(id => mongoose.Types.ObjectId.createFromHexString(id)) : [];
+    try {
+        const { name, category, title, tags, limit = 10, skip = 0 } = req.query;
+        const limitNum = Math.min(parseInt(limit), 100);
+        const skipNum = parseInt(skip);
 
-    if(!title){
-        const queryTitle = {
-            deleted: false,
-        };
-        if (name) {
-            queryTitle.titleSTR = { $regex: name, $options: 'i' };
-        }
-        if (category) {
-            queryTitle.category = category;
-        }
+        if (!title) {
+            const tagsArray = tags
+                ? tags
+                    .split(',')
+                    .map(id => id.trim())
+                    .filter(id => mongoose.isValidObjectId(id))
+                    .map(id => mongoose.Types.ObjectId(id))
+                : [];
 
-        const aggregationPipeline = [
-            { $match: query },
-            {
-                $addFields: {
-                    matchedTagsCount: {
-                        $size: {
-                            $ifNull: [
-                                { $setIntersection: ["$tags", tagsArray] },
-                                [],
-                            ],
+            const queryTitle = {
+                deleted: false,
+            };
+
+            if (name) {
+                queryTitle.titleSTR = { $regex: name, $options: 'i' };
+            }
+
+            if (category) {
+                queryTitle.category = category;
+            }
+
+            const aggregationPipeline = [
+                { $match: queryTitle },
+                {
+                    $addFields: {
+                        matchedTagsCount: {
+                            $size: {
+                                $ifNull: [
+                                    { $setIntersection: ["$tags", tagsArray] },
+                                    [],
+                                ],
+                            },
                         },
                     },
                 },
-            },
-            {
-                $sort: {
-                matchedTagsCount: -1,
-                createdAt: -1,
+                {
+                    $sort: {
+                        matchedTagsCount: -1,
+                        createdAt: -1,
+                    },
                 },
-            },
-            {
-                $project: {
-                    _id: 1,
-                    titleSTR: 1,
-                    imageURL: 1,
+                {
+                    $project: {
+                        _id: 1,
+                        titleSTR: 1,
+                        imageURL: 1,
+                    },
+                },
+                { $skip: skipNum },
+                { $limit: limitNum },
+            ];
+
+            const foundTitles = await Titles.aggregate(aggregationPipeline);
+            req.foundTitles = foundTitles;
+
+            const titlesCount = foundTitles.length;
+
+            if (titlesCount < limitNum) {
+                const remainingLimit = limitNum - titlesCount;
+
+                const queryProduct = {
+                    deleted: false,
+                };
+
+                if (name) {
+                    queryProduct.name = { $regex: name, $options: 'i' };
                 }
-            },
-            { $skip: skipNum },
-            { $limit: limitNum },
-        ];
-        const foundTitles = await Titles.aggregate(aggregationPipeline);
 
-        req.foundTitles = foundTitles
-        const titlesCount = titles.length;
+                if (tagsArray.length > 0) {
+                    queryProduct.tags = { $all: tagsArray };
+                }
 
-        if (titlesCount < limitNum) {
-            const queryProduct = {
+                const products = await Products.find(queryProduct)
+                    .limit(remainingLimit)
+                    .skip(Math.max(0, skipNum - titlesCount)) // adjust skip to remaining space
+                    .select('_id name imageURL');
+
+                req.foundProducts = products;
+            }
+        } else {
+            const query = {
                 deleted: false,
             };
+
             if (name) {
-                queryProduct.name = { $regex: name, $options: 'i' };
+                query.name = { $regex: name, $options: 'i' };
             }
-            if(tagsArray){
-                query.tags = { $all: tagsArray };
+
+            if (title) {
+                query.title = title;
             }
-            const remainingLimit = limitNum - titlesCount;
+
+            if (tags) {
+                const tagIds = tags
+                    .split(',')
+                    .map(id => id.trim())
+                    .filter(id => mongoose.isValidObjectId(id))
+                    .map(id => mongoose.Types.ObjectId(id));
+                query.tags = { $all: tagIds };
+            }
+
             const products = await Products.find(query)
-                        .limit(remainingLimit)
-                        .skip(Math.max(0, skipNum - remainingLimit))
-                        .select('_id name imageURL')
+                .limit(limitNum)
+                .skip(skipNum)
+                .select('_id name imageURL');
+
             req.foundProducts = products;
         }
-    }else{
-        const query = {
-            deleted: false,
-        };
 
-        if (name) query.name = { $regex: name, $options: 'i' };
-        if (title) query.title = title;
-        if (tags) {
-            const tagIds = tags.split(',').map(id => id.trim()).filter(id => mongoose.isValidObjectId(id)).map(id => mongoose.Types.ObjectId.createFromHexString(id));
-            query.tags = { $all: tagIds };
-        }
-
-        const products = await Products.find(query)
-            .limit(limitNum)
-            .skip(skipNum)
-            .select('_id name imageURL')
-
-        req.foundProducts = products;
+        next();
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
 
-module.exports = { searchByQueryAll };
+
+module.exports = {
+    searchByQueryAll,
+    searchByTitleAndCategory
+};
