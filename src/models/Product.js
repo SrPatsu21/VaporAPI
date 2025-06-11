@@ -70,6 +70,9 @@ const productSchema = new Schema(
     {collection: "Products", timestamps: true}
 )
 productSchema.index({ _id: "hashed" });
+productSchema.path('tags').validate(function (value) {
+    return value.length <= 10;
+}, 'You can assign at most 10 tags.');
 
 const Products = mongoose.model('Products', productSchema);
 

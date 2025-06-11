@@ -37,6 +37,13 @@ const searchByQueryAll = async (req, res, next) => {
                     ]
                 }
             },
+            {
+                $project: {
+                    _id: 1,
+                    titleSTR: 1,
+                    imageURL: 1,
+                },
+            },
             { $skip: skipNum },
             { $limit: limitNum }
         ]);
@@ -60,15 +67,6 @@ const searchByQueryAll = async (req, res, next) => {
                     }
                 },
                 {
-                    $lookup: {
-                        from: "Users",
-                        localField: "owner",
-                        foreignField: "_id",
-                        as: "owner"
-                    }
-                },
-                { $unwind: "$owner" },
-                {
                     $match: {
                         $or: [
                             { name: regex },
@@ -79,13 +77,10 @@ const searchByQueryAll = async (req, res, next) => {
                 },
                 {
                     $project: {
-                        magnetLink: 0,
-                        othersUrl: 0,
-                        deleted: 0,
-                        __v: 0,
-                        createdAt: 0,
-                        updatedAt: 0
-                    }
+                        _id: 1,
+                        titleSTR: 1,
+                        imageURL: 1,
+                    },
                 },
                 { $skip: skipNum },
                 { $limit: remainingLimit }
