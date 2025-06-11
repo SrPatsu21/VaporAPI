@@ -2,6 +2,7 @@ const express = require('express');
 const { authenticate } = require('./authController.js');
 const {
     isOwner,
+    isOwnerOrAdmin,
     createProduct,
     getProduct,
     updateProduct,
@@ -9,6 +10,7 @@ const {
     searchProduct,
     deleteProduct,
     restoreProduct,
+    permanentDeleteProduct
 } = require('../../middleware/v1/product.js');
 
 const router = express.Router();
@@ -700,5 +702,88 @@ router.patch("/:id/restore", authenticate, isOwner, restoreProduct, (req, res) =
         res.status(400).json({ error: error.message });
     }
 });
+
+/**
+ * @swagger
+ * /api/v1/products/{id}/permanent:
+ *   delete:
+ *     summary: Permanently delete a product
+ *     tags: [Product]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The ObjectId of the product to permanently delete
+ *     responses:
+ *       200:
+ *         description: Product permanently deleted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Product permanently deleted
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       format: uuid
+ *                     name:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     imageURL:
+ *                       type: string
+ *                     magnetLink:
+ *                       type: string
+ *                     othersUrl:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     title:
+ *                       type: string
+ *                       format: uuid
+ *                     tags:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     owner:
+ *                       type: string
+ *                       format: uuid
+ *                     version:
+ *                       type: string
+ *                     deleted:
+ *                       type: boolean
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                     __v:
+ *                       type: number
+ *       400:
+ *         description: Invalid input or server error
+ *       403:
+ *         description: Forbidden - only the owner or admin can delete
+ *       404:
+ *         description: Product not found
+ */
+router.delete('/products/:id/permanent', authenticate, isOwnerOrAdmin, permanentDeleteProduct, (req, res) => {
+    try {
+        res.status(200).json({ message: 'Product permanently deleted', data: req.permanentlyDeletedProduct });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 module.exports = router;

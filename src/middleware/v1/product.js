@@ -18,6 +18,24 @@ const isOwner = async (req, res, next) => {
     }
 }
 
+const isOwnerOrAdmin = async (req, res, next) => {
+    try {
+        if(!req.params.isAdmin){
+            const product = await Products.findById(req.params.id);
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+            if (product.owner.toString() !== req.user.userId) {
+                return res.status(403).json({ message: 'Forbidden: You are not the owner of this product' });
+            }
+        }
+
+        next();
+    } catch (err) {
+        next(err);
+    }
+}
+
 /*
 {
     "name": "Product Name",
@@ -327,13 +345,29 @@ const restoreProduct = async (req, res, next) => {
     }
 }
 
+//! OWNER OR ADMIN
+const permanentDeleteProduct = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const deletedProd = await Products.findByIdAndDelete(id);
+        if (!deletedProd) return res.status(404).json({ message: 'Product not found' });
+
+        req.permanentlyDeletedProduct = deletedProd;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     isOwner,
+    isOwnerOrAdmin,
     createProduct,
     getProduct,
     updateProduct,
     patchProduct,
     searchProduct,
     deleteProduct,
-    restoreProduct
+    restoreProduct,
+    permanentDeleteProduct
 };
