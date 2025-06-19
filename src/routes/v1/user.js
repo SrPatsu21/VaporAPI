@@ -2,9 +2,54 @@ const express = require('express');
 const {authenticate, isAdmin} = require('./authController.js')
 const {createUser, patchUser, updateUser, changePassword,
         softDeleteUser, restoreUser, getUser,
-        searchUser, authorizeSelf, adminControler} = require('../../middleware/v1/user.js')
+        searchUser, authorizeSelf, adminControler, getSelfUser} = require('../../middleware/v1/user.js')
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * /api/v1/user/me:
+ *   get:
+ *     summary: Get current user's information
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: The current user's profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 isAdmin:
+ *                   type: boolean
+ *                 deleted:
+ *                   type: boolean
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                 updatedAt:
+ *                   type: string
+ *                   format: date-time
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ */
+router.get('/me', authenticate, getSelfUser, (req, res) => {
+    try {
+        res.status(201).json(req.selfUser);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
 /**
  * @swagger

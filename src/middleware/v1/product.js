@@ -298,7 +298,7 @@ const searchProduct = async (req, res, next) => {
         const products = await Products.find(query)
             .limit(limited)
             .skip(skiped)
-            .select('-magnetLink -othersUrl -deleted -__v -createdAt -updatedAt')
+            .select('-deleted -__v -createdAt -updatedAt')
             .populate({
                 path: 'title',
                 select: '-deleted -__v -createdAt -updatedAt'
@@ -309,7 +309,7 @@ const searchProduct = async (req, res, next) => {
             })
             .populate({
                 path: 'owner',
-                select: '-email -isAdmin -password -deleted -__v -createdAt -updatedAt'
+                select: '-isAdmin -password -deleted -__v -createdAt -updatedAt'
             });
         req.foundProducts = products;
         next();

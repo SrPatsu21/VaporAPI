@@ -12,6 +12,29 @@ const authorizeSelf = (req, res, next) => {
     next();
 };
 
+
+const getSelfUser = async (req, res, next) => {
+    try {
+        const userId = req.user?.userId;
+
+        if (!userId) {
+            return res.status(401).json({ message: "Unauthorized: No user info found" });
+        }
+
+        const user = await Users.findById(userId).select("-password");
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        req.selfUser = user;
+        next();
+    } catch (err) {
+        next(err);
+    }
+};
+
+
 // TODO block ban email
 // TODO avoid nosql injection
 /*
@@ -292,6 +315,7 @@ const adminControler = async (req, res, next) => {
 
 //* Export the model
 module.exports = {
+    getSelfUser,
     createUser,
     updateUser,
     patchUser,
