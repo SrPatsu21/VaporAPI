@@ -91,7 +91,7 @@ const getProduct = async (req, res, next) => {
     try {
         const id = req.params.id;
         const product = await Products.findById(id)
-            .select('-magnetLink -othersUrl -deleted -__v -createdAt -updatedAt')
+            .select('-deleted -__v -createdAt -updatedAt')
             .populate({
                 path: 'title',
                 select: '-deleted -__v -createdAt -updatedAt'
