@@ -78,8 +78,9 @@ const searchByQueryAll = async (req, res, next) => {
                 {
                     $project: {
                         _id: 1,
-                        titleSTR: 1,
+                        name: 1,
                         imageURL: 1,
+                        magnetLink: 1,
                     },
                 },
                 { $skip: skipNum },
@@ -180,7 +181,7 @@ const searchByTitleAndCategory = async (req, res, next) => {
                 const products = await Products.find(queryProduct)
                     .limit(remainingLimit)
                     .skip(Math.max(0, skipNum - titlesCount))
-                    .select('_id name imageURL');
+                    .select('_id name imageURL magnetLink');
 
                 req.foundProducts = products;
             }
