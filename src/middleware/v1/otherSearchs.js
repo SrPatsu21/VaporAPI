@@ -203,7 +203,7 @@ const searchByTitleAndCategory = async (req, res, next) => {
             const products = await Products.find(query)
                 .limit(limitNum)
                 .skip(skipNum)
-                .select('_id name imageURL');
+                .select('_id name imageURL magnetLink');
 
             req.foundProducts = products;
         }
