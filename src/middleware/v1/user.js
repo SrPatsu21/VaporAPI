@@ -118,7 +118,7 @@ const updateUser = async (req, res, next) => {
 
         const exist = await Users.findOne({ username });
 
-        if (exist._id == req.user._id) {
+        if (exist && exist._id.toString() !== req.user._id.toString()) {
             return res.status(400).json({ error: 'User with this username already exists' });
         }
 
@@ -165,7 +165,7 @@ const patchUser = async (req, res, next) => {
         if(updates.username){
             const exist = await Users.findOne({ username });
 
-            if (exist) {
+            if (exist && exist._id.toString() !== req.user._id.toString()) {
                 return res.status(400).json({ error: 'User with this username already exists' });
             }
         }
